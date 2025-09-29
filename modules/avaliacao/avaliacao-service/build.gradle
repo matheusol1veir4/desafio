@@ -1,0 +1,12 @@
+dependencies {
+	api project(":modules:avaliacao:avaliacao-api")
+
+	compileOnly group: "com.liferay.portal", name: "release.portal.api"
+}
+
+buildService {
+	apiDir = "../avaliacao-api/src/main/java"
+	testDir = "../avaliacao-test/src/testIntegration/java"
+}
+
+group = "br.com.example.model.avaliacao"
