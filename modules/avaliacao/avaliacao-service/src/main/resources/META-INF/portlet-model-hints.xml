@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<model-hints>
+	<model name="br.com.example.model.avaliacao.model.Avaliacao">
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="avaliacaoId" type="long" />
+		<field name="funcionarioId" type="long" />
+		<field name="dataAvaliacao" type="Date" />
+		<field name="periodoDesafio" type="int" />
+		<field name="observacoesGerais" type="String" />
+		<field name="areaAtuacao" type="int" />
+	</model>
+	<model name="br.com.example.model.avaliacao.model.AvaliacaoDetalhe">
+		<field name="companyId" type="long" />
+		<field name="groupId" type="long" />
+		<field name="userId" type="long" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="avaliacaoDetalheId" type="long" />
+		<field name="avaliacaoId" type="long" />
+		<field name="tipoAvaliador" type="String" />
+		<field name="nomeAvaliador" type="String" />
+		<field name="observacoesAvaliador" type="String" />
+		<field name="desempenho" type="int" />
+	</model>
+</model-hints>

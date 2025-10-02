@@ -2,49 +2,76 @@
 <!DOCTYPE service-builder PUBLIC "-//Liferay//DTD Service Builder 7.4.0//EN" "http://www.liferay.com/dtd/liferay-service-builder_7_4_0.dtd">
 
 <service-builder dependency-injector="ds" package-path="br.com.example.model.avaliacao">
-	<namespace>FOO</namespace>
-	<!--<entity data-source="sampleDataSource" local-service="true" name="Foo" remote-service="false" session-factory="sampleSessionFactory" table="foo" tx-manager="sampleTransactionManager uuid="true"">-->
-	<entity local-service="true" name="Foo" remote-service="true" uuid="true">
+	<namespace>DESAFIO</namespace>
 
-		<!-- PK fields -->
 
-		<column name="fooId" primary="true" type="long" />
-
-		<!-- Group instance -->
-
-		<column name="groupId" type="long" />
-
-		<!-- Audit fields -->
+	<entity name="Avaliacao" local-service="true" remote-service="false">
 
 		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
 		<column name="userId" type="long" />
-		<column name="userName" type="String" />
 		<column name="createDate" type="Date" />
 		<column name="modifiedDate" type="Date" />
 
-		<!-- Other fields -->
+		<column name="avaliacaoId" type="long" primary="true" />
+		<column name="funcionarioId" type="long" />
+		<column name="dataAvaliacao" type="Date" />
+		<column name="periodoDesafio" type="int" />
+		<column name="observacoesGerais" type="String" />
+		<column name="areaAtuacao" type="int" />
 
-		<column name="field1" type="String" />
-		<column name="field2" type="boolean" />
-		<column name="field3" type="int" />
-		<column name="field4" type="Date" />
-		<column name="field5" type="String" />
-
-		<!-- Order -->
-
-		<order by="asc">
-			<order-column name="field1" />
-		</order>
-
-		<!-- Finder methods -->
-
-		<finder name="Field2" return-type="Collection">
-			<finder-column name="field2" />
+		<finder name="FuncionarioId" return-type="Collection">
+			<finder-column name="funcionarioId" />
 		</finder>
 
-		<!-- References -->
+		<!-- Busca o ciclo específico de um funcionário - deve ser único por regra de negócio -->
+		<finder name="FuncionarioIdPeriodoDesafio" return-type="Avaliacao" unique="true">
+			<finder-column name="funcionarioId" />
+			<finder-column name="periodoDesafio" />
+		</finder>
 
-		<reference entity="AssetEntry" package-path="com.liferay.portlet.asset" />
-		<reference entity="AssetTag" package-path="com.liferay.portlet.asset" />
+		<finder name="PeriodoDesafio" return-type="Collection">
+			<finder-column name="periodoDesafio" />
+		</finder>
+
+		<!-- Consulta por período para relatórios temporais e dashboard -->
+		<finder name="DataAvaliacaoBetween" return-type="Collection">
+			<finder-column name="dataAvaliacao" comparator="&gt;=" />
+			<finder-column name="dataAvaliacao" comparator="&lt;=" />
+		</finder>
+
+		<finder name="AreaAtuacao" return-type="Collection">
+			<finder-column name="areaAtuacao" />
+		</finder>
+
+	</entity>
+
+	<entity name="AvaliacaoDetalhe" local-service="true" remote-service="false">
+
+		<column name="companyId" type="long" />
+		<column name="groupId" type="long" />
+		<column name="userId" type="long" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<column name="avaliacaoDetalheId" type="long" primary="true" />
+		<column name="avaliacaoId" type="long" />
+		<column name="tipoAvaliador" type="String" />
+		<column name="nomeAvaliador" type="String" />
+		<column name="observacoesAvaliador" type="String" />
+		<column name="desempenho" type="int" />
+
+
+		<finder name="AvaliacaoId" return-type="Collection">
+			<finder-column name="avaliacaoId" />
+		</finder>
+
+		<!-- Busca a avaliação específica de um avaliador para um ciclo - deve ser único -->
+		<finder name="AvaliacaoIdTipoAvaliador" return-type="AvaliacaoDetalhe" unique="true">
+			<finder-column name="avaliacaoId" />
+			<finder-column name="tipoAvaliador" />
+		</finder>
+
+
 	</entity>
 </service-builder>

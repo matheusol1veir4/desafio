@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping auto-import="false" default-lazy="false">
+	<import class="br.com.example.model.avaliacao.model.Avaliacao" />
+	<import class="br.com.example.model.avaliacao.model.AvaliacaoDetalhe" />
+	<class name="br.com.example.model.avaliacao.model.impl.AvaliacaoImpl" table="DESAFIO_Avaliacao">
+		<id access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="avaliacaoId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="userId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="createDate" type="org.hibernate.type.TimestampType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="modifiedDate" type="org.hibernate.type.TimestampType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="funcionarioId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="dataAvaliacao" type="org.hibernate.type.TimestampType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="periodoDesafio" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="observacoesGerais" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="areaAtuacao" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
+	</class>
+	<class name="br.com.example.model.avaliacao.model.impl.AvaliacaoDetalheImpl" table="DESAFIO_AvaliacaoDetalhe">
+		<id access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="avaliacaoDetalheId" type="long">
+			<generator class="assigned" />
+		</id>
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="companyId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="groupId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="userId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="createDate" type="org.hibernate.type.TimestampType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="modifiedDate" type="org.hibernate.type.TimestampType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="avaliacaoId" type="com.liferay.portal.dao.orm.hibernate.LongType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="tipoAvaliador" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="nomeAvaliador" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="observacoesAvaliador" type="com.liferay.portal.dao.orm.hibernate.StringType" />
+		<property access="com.liferay.portal.dao.orm.hibernate.MethodPropertyAccessor" name="desempenho" type="com.liferay.portal.dao.orm.hibernate.IntegerType" />
+	</class>
+</hibernate-mapping>
