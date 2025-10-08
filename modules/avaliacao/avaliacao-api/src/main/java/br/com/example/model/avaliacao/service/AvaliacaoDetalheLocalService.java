@@ -5,6 +5,7 @@
 
 package br.com.example.model.avaliacao.service;
 
+import br.com.example.model.avaliacao.model.Avaliacao;
 import br.com.example.model.avaliacao.model.AvaliacaoDetalhe;
 
 import com.liferay.petra.sql.dsl.query.DSLQuery;
@@ -19,6 +20,7 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -53,6 +55,24 @@ public interface AvaliacaoDetalheLocalService
 	 *
 	 * Never modify this interface directly. Add custom service methods to <code>br.com.example.model.avaliacao.service.impl.AvaliacaoDetalheLocalServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface. Consume the avaliacao detalhe local service via injection or a <code>org.osgi.util.tracker.ServiceTracker</code>. Use {@link AvaliacaoDetalheLocalServiceUtil} if injection and service tracking are not available.
 	 */
+
+	/**
+	 * Adiciona um detalhe de avaliação vinculado a uma avaliação existente.
+	 *
+	 * @param avaliacao           Avaliação pai à qual o detalhe será vinculado
+	 * @param tipoAvaliador       Tipo do avaliador (1=TechLead, 2=Gerente, 3=RH)
+	 * @param nomeAvaliador       Nome completo do avaliador
+	 * @param observacoesAvaliador Comentários específicos do avaliador
+	 * @param desempenho          Nota de desempenho (1-5 conforme DesempenhoEnum)
+	 * @param serviceContext      Contexto de serviço com informações de auditoria
+	 * @return O detalhe de avaliação criado
+	 * @throws PortalException    se os dados fornecidos forem inválidos
+	 */
+	public AvaliacaoDetalhe addAvaliacaoDetalhe(
+			Avaliacao avaliacao, int tipoAvaliador, String nomeAvaliador,
+			String observacoesAvaliador, int desempenho,
+			ServiceContext serviceContext)
+		throws PortalException;
 
 	/**
 	 * Adds the avaliacao detalhe to the database. Also notifies the appropriate model listeners.
@@ -261,5 +281,23 @@ public interface AvaliacaoDetalheLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public AvaliacaoDetalhe updateAvaliacaoDetalhe(
 		AvaliacaoDetalhe avaliacaoDetalhe);
+
+	/**
+	 * Atualiza um detalhe de avaliação existente.
+	 *
+	 * @param avaliacaoDetalheId   ID do detalhe a ser atualizado
+	 * @param tipoAvaliador        Tipo do avaliador (1=TechLead, 2=Gerente, 3=RH)
+	 * @param nomeAvaliador        Nome completo do avaliador
+	 * @param observacoesAvaliador Comentários específicos do avaliador
+	 * @param desempenho           Nota de desempenho (1-5 conforme DesempenhoEnum)
+	 * @param serviceContext       Contexto de serviço com informações de auditoria
+	 * @return O detalhe de avaliação atualizado
+	 * @throws PortalException     se os dados fornecidos forem inválidos
+	 */
+	public AvaliacaoDetalhe updateAvaliacaoDetalhe(
+			long avaliacaoDetalheId, int tipoAvaliador, String nomeAvaliador,
+			String observacoesAvaliador, int desempenho,
+			ServiceContext serviceContext)
+		throws PortalException;
 
 }

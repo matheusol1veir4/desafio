@@ -56,7 +56,7 @@
 
 		<column name="avaliacaoDetalheId" type="long" primary="true" />
 		<column name="avaliacaoId" type="long" />
-		<column name="tipoAvaliador" type="String" />
+		<column name="tipoAvaliador" type="int" />
 		<column name="nomeAvaliador" type="String" />
 		<column name="observacoesAvaliador" type="String" />
 		<column name="desempenho" type="int" />

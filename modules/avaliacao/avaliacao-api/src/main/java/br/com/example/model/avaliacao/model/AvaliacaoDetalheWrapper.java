@@ -92,7 +92,7 @@ public class AvaliacaoDetalheWrapper
 			setAvaliacaoId(avaliacaoId);
 		}
 
-		String tipoAvaliador = (String)attributes.get("tipoAvaliador");
+		Integer tipoAvaliador = (Integer)attributes.get("tipoAvaliador");
 
 		if (tipoAvaliador != null) {
 			setTipoAvaliador(tipoAvaliador);
@@ -229,7 +229,7 @@ public class AvaliacaoDetalheWrapper
 	 * @return the tipo avaliador of this avaliacao detalhe
 	 */
 	@Override
-	public String getTipoAvaliador() {
+	public int getTipoAvaliador() {
 		return model.getTipoAvaliador();
 	}
 
@@ -364,7 +364,7 @@ public class AvaliacaoDetalheWrapper
 	 * @param tipoAvaliador the tipo avaliador of this avaliacao detalhe
 	 */
 	@Override
-	public void setTipoAvaliador(String tipoAvaliador) {
+	public void setTipoAvaliador(int tipoAvaliador) {
 		model.setTipoAvaliador(tipoAvaliador);
 	}
 

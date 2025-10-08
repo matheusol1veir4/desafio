@@ -296,7 +296,7 @@ public class AvaliacaoDetalheUtil {
 	 * @throws NoSuchAvaliacaoDetalheException if a matching avaliacao detalhe could not be found
 	 */
 	public static AvaliacaoDetalhe findByAvaliacaoIdTipoAvaliador(
-			long avaliacaoId, String tipoAvaliador)
+			long avaliacaoId, int tipoAvaliador)
 		throws br.com.example.model.avaliacao.exception.
 			NoSuchAvaliacaoDetalheException {
 
@@ -312,7 +312,7 @@ public class AvaliacaoDetalheUtil {
 	 * @return the matching avaliacao detalhe, or <code>null</code> if a matching avaliacao detalhe could not be found
 	 */
 	public static AvaliacaoDetalhe fetchByAvaliacaoIdTipoAvaliador(
-		long avaliacaoId, String tipoAvaliador) {
+		long avaliacaoId, int tipoAvaliador) {
 
 		return getPersistence().fetchByAvaliacaoIdTipoAvaliador(
 			avaliacaoId, tipoAvaliador);
@@ -327,7 +327,7 @@ public class AvaliacaoDetalheUtil {
 	 * @return the matching avaliacao detalhe, or <code>null</code> if a matching avaliacao detalhe could not be found
 	 */
 	public static AvaliacaoDetalhe fetchByAvaliacaoIdTipoAvaliador(
-		long avaliacaoId, String tipoAvaliador, boolean useFinderCache) {
+		long avaliacaoId, int tipoAvaliador, boolean useFinderCache) {
 
 		return getPersistence().fetchByAvaliacaoIdTipoAvaliador(
 			avaliacaoId, tipoAvaliador, useFinderCache);
@@ -341,7 +341,7 @@ public class AvaliacaoDetalheUtil {
 	 * @return the avaliacao detalhe that was removed
 	 */
 	public static AvaliacaoDetalhe removeByAvaliacaoIdTipoAvaliador(
-			long avaliacaoId, String tipoAvaliador)
+			long avaliacaoId, int tipoAvaliador)
 		throws br.com.example.model.avaliacao.exception.
 			NoSuchAvaliacaoDetalheException {
 
@@ -357,7 +357,7 @@ public class AvaliacaoDetalheUtil {
 	 * @return the number of matching avaliacao detalhes
 	 */
 	public static int countByAvaliacaoIdTipoAvaliador(
-		long avaliacaoId, String tipoAvaliador) {
+		long avaliacaoId, int tipoAvaliador) {
 
 		return getPersistence().countByAvaliacaoIdTipoAvaliador(
 			avaliacaoId, tipoAvaliador);

@@ -3,7 +3,7 @@ create index IX_1A20791D on DESAFIO_Avaliacao (dataAvaliacao, dataAvaliacao);
 create unique index IX_CA07164C on DESAFIO_Avaliacao (funcionarioId, periodoDesafio);
 create index IX_292AA7E0 on DESAFIO_Avaliacao (periodoDesafio);
 
-create unique index IX_E5DEBAF1 on DESAFIO_AvaliacaoDetalhe (avaliacaoId, tipoAvaliador[$COLUMN_LENGTH:75$]);
+create unique index IX_E5DEBAF1 on DESAFIO_AvaliacaoDetalhe (avaliacaoId, tipoAvaliador);
 
 create unique index IX_BD7EC4F7 on FOO_Avaliacoes (descricaoDesafioId, tipoAvaliador[$COLUMN_LENGTH:75$]);
 create index IX_C8431319 on FOO_Avaliacoes (groupId);

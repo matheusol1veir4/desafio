@@ -41,9 +41,9 @@ public class AvaliacaoDetalheTable extends BaseTable<AvaliacaoDetalheTable> {
 			Column.FLAG_PRIMARY);
 	public final Column<AvaliacaoDetalheTable, Long> avaliacaoId = createColumn(
 		"avaliacaoId", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
-	public final Column<AvaliacaoDetalheTable, String> tipoAvaliador =
+	public final Column<AvaliacaoDetalheTable, Integer> tipoAvaliador =
 		createColumn(
-			"tipoAvaliador", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
+			"tipoAvaliador", Integer.class, Types.INTEGER, Column.FLAG_DEFAULT);
 	public final Column<AvaliacaoDetalheTable, String> nomeAvaliador =
 		createColumn(
 			"nomeAvaliador", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);

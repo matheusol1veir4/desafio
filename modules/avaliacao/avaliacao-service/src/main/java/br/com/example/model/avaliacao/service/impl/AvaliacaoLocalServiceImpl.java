@@ -8,6 +8,7 @@ package br.com.example.model.avaliacao.service.impl;
 import br.com.example.model.avaliacao.enums.AreaAtuacaoEnum;
 import br.com.example.model.avaliacao.enums.PeriodoDesafioEnum;
 import br.com.example.model.avaliacao.model.Avaliacao;
+import br.com.example.model.avaliacao.model.AvaliacaoDetalhe;
 import br.com.example.model.avaliacao.service.base.AvaliacaoLocalServiceBaseImpl;
 
 import com.liferay.portal.aop.AopService;
@@ -16,8 +17,12 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
+import javax.ws.rs.NotFoundException;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Brian Wing Shun Chan
@@ -29,12 +34,16 @@ import java.util.Date;
 public class AvaliacaoLocalServiceImpl extends AvaliacaoLocalServiceBaseImpl {
 
 	/**
-	 * @param funcionarioId O ID do funcionário.
-	 * @param dataAvaliacao A data da avaliação.
-	 * @param periodoDesafio O tipo da avaliação.
-	 * @param observacoesGerais Observações gerais da avaliação.
-	 * @param areaAtuacao A área de atuação do funcionário.
-	 * @throws PortalException
+	 * Cria uma nova avaliação de desafio para um funcionário.
+	 *
+	 * @param funcionarioId     ID do usuário que está sendo avaliado
+	 * @param dataAvaliacao     Data em que a avaliação está sendo criada
+	 * @param periodoDesafio    Período do ciclo (30, 60 ou 90 dias)
+	 * @param observacoesGerais Comentários gerais sobre a avaliação
+	 * @param areaAtuacao       Área de atuação do funcionário
+	 * @param serviceContext    Contexto de serviço com informações de auditoria
+	 * @return                  A avaliação criada
+	 * @throws PortalException  se os dados fornecidos forem inválidos
 	 */
 
 	@Override
@@ -48,13 +57,13 @@ public class AvaliacaoLocalServiceImpl extends AvaliacaoLocalServiceBaseImpl {
 
 		validateFields(funcionarioId, dataAvaliacao, periodoDesafio, observacoesGerais, areaAtuacao);
 
-		//validar com o Marc
+		// Gera um ID Único
 		long avaliacaoId = counterLocalService.increment(Avaliacao.class.getName());
-
+		// Cria a entidade utilizando esse ID
 		Avaliacao avaliacao = avaliacaoPersistence.create(avaliacaoId);
 
 		avaliacao.setFuncionarioId(funcionarioId);
-		avaliacao.setDataAvaliacao(dataAvaliacao); // aqui será que tem que fazer alguma conversão ?
+		avaliacao.setDataAvaliacao(dataAvaliacao);
 		avaliacao.setPeriodoDesafio(periodoDesafio);
 		avaliacao.setObservacoesGerais(observacoesGerais);
 		avaliacao.setAreaAtuacao(areaAtuacao);
@@ -70,61 +79,126 @@ public class AvaliacaoLocalServiceImpl extends AvaliacaoLocalServiceBaseImpl {
 		return avaliacao;
 	}
 
+	/**
+	 * Atualiza uma avaliação existente.
+	 * Não permite alterar o funcionário após criação.
+	 *
+	 * @param avaliacaoId       ID da avaliação a ser atualizada
+	 * @param dataAvaliacao     Nova data da avaliação
+	 * @param periodoDesafio    Novo período do desafio
+	 * @param observacoesGerais Novas observações gerais
+	 * @param areaAtuacao       Nova área de atuação
+	 * @param serviceContext    Contexto de serviço
+	 * @return                  A avaliação atualizada
+	 * @throws PortalException  se os dados forem inválidos ou funcionário for alterado
+	 */
 
-//	private void validateFields (long funcionarioId, Date dataAvaliacao, int periodoDesafio, String observacoesGerais, AreaAtuacaoEnum areaAtuacaoEnum) throws PortalException {
-//		// tenho que por null ? ou zero ?
-//		// vou validar o campo de funcionário ?
-//		if (funcionarioId <= 0) {
-//			throw new PortalException("Funcionário inválido.");
-//		}
-//		if (dataAvaliacao == null || dataAvaliacao.after(new Date())) {
-//			throw new PortalException("Data da avaliação inválida.");
-//		}
-//		// tenho que por null ? ou zero ?
-//		if (periodoDesafio <= 0) {
-//			throw new PortalException("Período do desafio inválido.");
-//		}
-//		// tenho que por null ? ou zero ?
-//		if (areaAtuacaoEnum == null || areaAtuacaoEnum.getId() <= 0){
-//			throw new PortalException("Área de atuação inválida.");
-//		}
-//		if (observacoesGerais == null || observacoesGerais.trim().isEmpty()) {
-//			throw new PortalException("Observações gerais inválidas.");
-//		}
+	@Override
+	public Avaliacao updateAvaliacao(
+			long avaliacaoId,
+			Date dataAvaliacao,
+			int periodoDesafio,
+			String observacoesGerais,
+			int areaAtuacao,
+			ServiceContext serviceContext) throws PortalException {
+
+		Avaliacao avaliacao = avaliacaoPersistence.findByPrimaryKey(avaliacaoId);
+
+		validateFields(avaliacao.getFuncionarioId(), dataAvaliacao, periodoDesafio, observacoesGerais, areaAtuacao);
+
+		avaliacao.setDataAvaliacao(dataAvaliacao);
+		avaliacao.setPeriodoDesafio(periodoDesafio);
+		avaliacao.setObservacoesGerais(observacoesGerais);
+		avaliacao.setAreaAtuacao(areaAtuacao);
+
+		avaliacao.setModifiedDate(serviceContext.getModifiedDate(new Date()));
+		avaliacao.setUserId(serviceContext.getUserId());
+
+
+		avaliacao = super.updateAvaliacao(avaliacao);
+
+		return avaliacao;
+	}
+
+	//TO DO: depois que implementar a AvaliacaoDetalhe precisamos implementar a deleção em cascata!!!
+	/**
+	 * Remove uma avaliação e todos os seus detalhes relacionados (cascade delete).
+	 *
+	 * @param avaliacaoId      ID da avaliação a ser removida
+	 * @return                 A avaliação removida
+	 * @throws PortalException se a avaliação não for encontrada ou houver erro ao deletar
+	 */
+	@Override
+	public Avaliacao deleteAvaliacao(long avaliacaoId) throws PortalException {
+
+		// 1. Busca a avaliação existente
+		Avaliacao avaliacao = avaliacaoPersistence.findByPrimaryKey(avaliacaoId);
+
+		// 2. Deleta TODOS os AvaliacaoDetalhe relacionados ANTES (CASCADE)
+		deleteRelatedAvaliacaoDetalhes(avaliacaoId);
+
+		// 3. Agora deleta a avaliação principal
+		return super.deleteAvaliacao(avaliacao);
+	}
+
+	/**
+	 * Remove todos os AvaliacaoDetalhe relacionados à avaliação.
+	 * Este método é chamado ANTES de deletar a Avaliacao principal.
+	 *
+	 * @param avaliacaoId ID da avaliação pai
+	 * @throws PortalException se houver erro ao deletar os detalhes
+	 */
+	private void deleteRelatedAvaliacaoDetalhes(long avaliacaoId) throws PortalException {
+
+		// Busca todos os detalhes vinculados a esta avaliação usando a persistence
+		List<AvaliacaoDetalhe> detalhes = avaliacaoDetalhePersistence.findByAvaliacaoId(avaliacaoId);
+
+		// Deleta cada detalhe individualmente
+		for (AvaliacaoDetalhe detalhe : detalhes) {
+			avaliacaoDetalheLocalService.deleteAvaliacaoDetalhe(detalhe.getAvaliacaoDetalheId());
+		}
+	}
+
+
+	/**
+	 * validateFields -> Valida os campos obrigatórios para criação/atualização de avaliação.
+	 *
+	 * @param funcionarioId     Valida se o usuário existe no sistema
+	 * @param dataAvaliacao     Valida se a data não é nula
+	 * @param periodoDesafio    Valida se o período é 30, 60 ou 90 dias
+	 * @param observacoesGerais Valida se o campo não está vazio
+	 * @param areaAtuacao       Valida se corresponde a uma área válida do enum
+	 *
+	 * @throws NotFoundException quando o funcionário não é encontrado
+	 * @throws PortalException   quando outros campos são inválidos
+	 */
 
 	private void validateFields(long funcionarioId, Date dataAvaliacao, int periodoDesafio, String observacoesGerais, int areaAtuacao) throws PortalException {
 
-		// Valida o funcionário que está sendo avaliado
-		if (funcionarioId <= 0) {
-			throw new PortalException("O funcionário a ser avaliado é obrigatório.");
-		}
+		Optional
+				.ofNullable(userLocalService.fetchUser(funcionarioId))
+				.orElseThrow(() -> new NotFoundException("Não foi possivel encontrar o usuario."));
 
-		// Valida a data da avaliação
 		if (dataAvaliacao == null) {
 			throw new PortalException("A data da avaliação é obrigatória.");
 		}
-
-		// Valida o período do desafio (30, 60, 90)
-		// Usando o enum para validação
 		try {
 			PeriodoDesafioEnum.fromId(periodoDesafio);
 		} catch (IllegalArgumentException e) {
 			throw new PortalException("O período do desafio é inválido.");
 		}
-
-		// Valida a área de atuação usando o enum
 		try {
 			AreaAtuacaoEnum.fromId(areaAtuacao);
 		} catch (IllegalArgumentException e) {
 			throw new PortalException("A área de atuação é inválida.");
 		}
-
-		// Valida as observações
 		if (Validator.isNull(observacoesGerais)) {
 			throw new PortalException("As observações gerais são obrigatórias.");
 		}
 
 	}
 
+	@Reference
+	private AvaliacaoDetalheLocalServiceImpl avaliacaoDetalheLocalService;
 
 }

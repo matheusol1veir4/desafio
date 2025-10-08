@@ -46,12 +46,16 @@ public class AvaliacaoLocalServiceWrapper
 	}
 
 	/**
-	 * @param funcionarioId O ID do funcionário.
-	 * @param dataAvaliacao A data da avaliação.
-	 * @param periodoDesafio O tipo da avaliação.
-	 * @param observacoesGerais Observações gerais da avaliação.
-	 * @param areaAtuacao A área de atuação do funcionário.
-	 * @throws PortalException
+	 * Cria uma nova avaliação de desafio para um funcionário.
+	 *
+	 * @param funcionarioId     ID do usuário que está sendo avaliado
+	 * @param dataAvaliacao     Data em que a avaliação está sendo criada
+	 * @param periodoDesafio    Período do ciclo (30, 60 ou 90 dias)
+	 * @param observacoesGerais Comentários gerais sobre a avaliação
+	 * @param areaAtuacao       Área de atuação do funcionário
+	 * @param serviceContext    Contexto de serviço com informações de auditoria
+	 * @return A avaliação criada
+	 * @throws PortalException  se os dados fornecidos forem inválidos
 	 */
 	@Override
 	public br.com.example.model.avaliacao.model.Avaliacao addAvaliacao(
@@ -338,6 +342,31 @@ public class AvaliacaoLocalServiceWrapper
 		br.com.example.model.avaliacao.model.Avaliacao avaliacao) {
 
 		return _avaliacaoLocalService.updateAvaliacao(avaliacao);
+	}
+
+	/**
+	 * Atualiza uma avaliação existente.
+	 * Não permite alterar o funcionário após criação.
+	 *
+	 * @param avaliacaoId       ID da avaliação a ser atualizada
+	 * @param dataAvaliacao     Nova data da avaliação
+	 * @param periodoDesafio    Novo período do desafio
+	 * @param observacoesGerais Novas observações gerais
+	 * @param areaAtuacao       Nova área de atuação
+	 * @param serviceContext    Contexto de serviço
+	 * @return A avaliação atualizada
+	 * @throws PortalException  se os dados forem inválidos ou funcionário for alterado
+	 */
+	@Override
+	public br.com.example.model.avaliacao.model.Avaliacao updateAvaliacao(
+			long avaliacaoId, java.util.Date dataAvaliacao, int periodoDesafio,
+			String observacoesGerais, int areaAtuacao,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _avaliacaoLocalService.updateAvaliacao(
+			avaliacaoId, dataAvaliacao, periodoDesafio, observacoesGerais,
+			areaAtuacao, serviceContext);
 	}
 
 	@Override

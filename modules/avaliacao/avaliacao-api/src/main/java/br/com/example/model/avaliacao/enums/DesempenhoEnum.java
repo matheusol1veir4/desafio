@@ -26,7 +26,6 @@ public enum DesempenhoEnum {
         return id;
     }
 
-    //validar com o Marc
 
     /**
      * Converte um valor inteiro do banco para a constante enum correspondente.

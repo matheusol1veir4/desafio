@@ -22,7 +22,7 @@
 		<field name="modifiedDate" type="Date" />
 		<field name="avaliacaoDetalheId" type="long" />
 		<field name="avaliacaoId" type="long" />
-		<field name="tipoAvaliador" type="String" />
+		<field name="tipoAvaliador" type="int" />
 		<field name="nomeAvaliador" type="String" />
 		<field name="observacoesAvaliador" type="String" />
 		<field name="desempenho" type="int" />

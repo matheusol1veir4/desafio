@@ -43,7 +43,6 @@ import java.lang.reflect.InvocationHandler;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 import javax.sql.DataSource;
@@ -603,7 +602,7 @@ public class AvaliacaoDetalhePersistenceImpl
 	 */
 	@Override
 	public AvaliacaoDetalhe findByAvaliacaoIdTipoAvaliador(
-			long avaliacaoId, String tipoAvaliador)
+			long avaliacaoId, int tipoAvaliador)
 		throws NoSuchAvaliacaoDetalheException {
 
 		AvaliacaoDetalhe avaliacaoDetalhe = fetchByAvaliacaoIdTipoAvaliador(
@@ -641,7 +640,7 @@ public class AvaliacaoDetalhePersistenceImpl
 	 */
 	@Override
 	public AvaliacaoDetalhe fetchByAvaliacaoIdTipoAvaliador(
-		long avaliacaoId, String tipoAvaliador) {
+		long avaliacaoId, int tipoAvaliador) {
 
 		return fetchByAvaliacaoIdTipoAvaliador(
 			avaliacaoId, tipoAvaliador, true);
@@ -657,9 +656,7 @@ public class AvaliacaoDetalhePersistenceImpl
 	 */
 	@Override
 	public AvaliacaoDetalhe fetchByAvaliacaoIdTipoAvaliador(
-		long avaliacaoId, String tipoAvaliador, boolean useFinderCache) {
-
-		tipoAvaliador = Objects.toString(tipoAvaliador, "");
+		long avaliacaoId, int tipoAvaliador, boolean useFinderCache) {
 
 		Object[] finderArgs = null;
 
@@ -678,8 +675,7 @@ public class AvaliacaoDetalhePersistenceImpl
 			AvaliacaoDetalhe avaliacaoDetalhe = (AvaliacaoDetalhe)result;
 
 			if ((avaliacaoId != avaliacaoDetalhe.getAvaliacaoId()) ||
-				!Objects.equals(
-					tipoAvaliador, avaliacaoDetalhe.getTipoAvaliador())) {
+				(tipoAvaliador != avaliacaoDetalhe.getTipoAvaliador())) {
 
 				result = null;
 			}
@@ -692,18 +688,7 @@ public class AvaliacaoDetalhePersistenceImpl
 
 			sb.append(_FINDER_COLUMN_AVALIACAOIDTIPOAVALIADOR_AVALIACAOID_2);
 
-			boolean bindTipoAvaliador = false;
-
-			if (tipoAvaliador.isEmpty()) {
-				sb.append(
-					_FINDER_COLUMN_AVALIACAOIDTIPOAVALIADOR_TIPOAVALIADOR_3);
-			}
-			else {
-				bindTipoAvaliador = true;
-
-				sb.append(
-					_FINDER_COLUMN_AVALIACAOIDTIPOAVALIADOR_TIPOAVALIADOR_2);
-			}
+			sb.append(_FINDER_COLUMN_AVALIACAOIDTIPOAVALIADOR_TIPOAVALIADOR_2);
 
 			String sql = sb.toString();
 
@@ -718,9 +703,7 @@ public class AvaliacaoDetalhePersistenceImpl
 
 				queryPos.add(avaliacaoId);
 
-				if (bindTipoAvaliador) {
-					queryPos.add(tipoAvaliador);
-				}
+				queryPos.add(tipoAvaliador);
 
 				List<AvaliacaoDetalhe> list = query.list();
 
@@ -764,7 +747,7 @@ public class AvaliacaoDetalhePersistenceImpl
 	 */
 	@Override
 	public AvaliacaoDetalhe removeByAvaliacaoIdTipoAvaliador(
-			long avaliacaoId, String tipoAvaliador)
+			long avaliacaoId, int tipoAvaliador)
 		throws NoSuchAvaliacaoDetalheException {
 
 		AvaliacaoDetalhe avaliacaoDetalhe = findByAvaliacaoIdTipoAvaliador(
@@ -782,7 +765,7 @@ public class AvaliacaoDetalhePersistenceImpl
 	 */
 	@Override
 	public int countByAvaliacaoIdTipoAvaliador(
-		long avaliacaoId, String tipoAvaliador) {
+		long avaliacaoId, int tipoAvaliador) {
 
 		AvaliacaoDetalhe avaliacaoDetalhe = fetchByAvaliacaoIdTipoAvaliador(
 			avaliacaoId, tipoAvaliador);
@@ -801,10 +784,6 @@ public class AvaliacaoDetalhePersistenceImpl
 	private static final String
 		_FINDER_COLUMN_AVALIACAOIDTIPOAVALIADOR_TIPOAVALIADOR_2 =
 			"avaliacaoDetalhe.tipoAvaliador = ?";
-
-	private static final String
-		_FINDER_COLUMN_AVALIACAOIDTIPOAVALIADOR_TIPOAVALIADOR_3 =
-			"(avaliacaoDetalhe.tipoAvaliador IS NULL OR avaliacaoDetalhe.tipoAvaliador = '')";
 
 	public AvaliacaoDetalhePersistenceImpl() {
 		setModelClass(AvaliacaoDetalhe.class);
@@ -1396,7 +1375,7 @@ public class AvaliacaoDetalhePersistenceImpl
 
 		_finderPathFetchByAvaliacaoIdTipoAvaliador = new FinderPath(
 			FINDER_CLASS_NAME_ENTITY, "fetchByAvaliacaoIdTipoAvaliador",
-			new String[] {Long.class.getName(), String.class.getName()},
+			new String[] {Long.class.getName(), Integer.class.getName()},
 			new String[] {"avaliacaoId", "tipoAvaliador"}, true);
 
 		AvaliacaoDetalheUtil.setPersistence(this);

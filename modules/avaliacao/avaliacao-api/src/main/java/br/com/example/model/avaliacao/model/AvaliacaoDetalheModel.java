@@ -167,15 +167,14 @@ public interface AvaliacaoDetalheModel
 	 *
 	 * @return the tipo avaliador of this avaliacao detalhe
 	 */
-	@AutoEscape
-	public String getTipoAvaliador();
+	public int getTipoAvaliador();
 
 	/**
 	 * Sets the tipo avaliador of this avaliacao detalhe.
 	 *
 	 * @param tipoAvaliador the tipo avaliador of this avaliacao detalhe
 	 */
-	public void setTipoAvaliador(String tipoAvaliador);
+	public void setTipoAvaliador(int tipoAvaliador);
 
 	/**
 	 * Returns the nome avaliador of this avaliacao detalhe.

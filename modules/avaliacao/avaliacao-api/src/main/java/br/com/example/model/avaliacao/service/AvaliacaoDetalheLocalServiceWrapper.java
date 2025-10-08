@@ -30,6 +30,32 @@ public class AvaliacaoDetalheLocalServiceWrapper
 	}
 
 	/**
+	 * Adiciona um detalhe de avaliação vinculado a uma avaliação existente.
+	 *
+	 * @param avaliacao           Avaliação pai à qual o detalhe será vinculado
+	 * @param tipoAvaliador       Tipo do avaliador (1=TechLead, 2=Gerente, 3=RH)
+	 * @param nomeAvaliador       Nome completo do avaliador
+	 * @param observacoesAvaliador Comentários específicos do avaliador
+	 * @param desempenho          Nota de desempenho (1-5 conforme DesempenhoEnum)
+	 * @param serviceContext      Contexto de serviço com informações de auditoria
+	 * @return O detalhe de avaliação criado
+	 * @throws PortalException    se os dados fornecidos forem inválidos
+	 */
+	@Override
+	public br.com.example.model.avaliacao.model.AvaliacaoDetalhe
+			addAvaliacaoDetalhe(
+				br.com.example.model.avaliacao.model.Avaliacao avaliacao,
+				int tipoAvaliador, String nomeAvaliador,
+				String observacoesAvaliador, int desempenho,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _avaliacaoDetalheLocalService.addAvaliacaoDetalhe(
+			avaliacao, tipoAvaliador, nomeAvaliador, observacoesAvaliador,
+			desempenho, serviceContext);
+	}
+
+	/**
 	 * Adds the avaliacao detalhe to the database. Also notifies the appropriate model listeners.
 	 *
 	 * <p>
@@ -336,6 +362,32 @@ public class AvaliacaoDetalheLocalServiceWrapper
 
 		return _avaliacaoDetalheLocalService.updateAvaliacaoDetalhe(
 			avaliacaoDetalhe);
+	}
+
+	/**
+	 * Atualiza um detalhe de avaliação existente.
+	 *
+	 * @param avaliacaoDetalheId   ID do detalhe a ser atualizado
+	 * @param tipoAvaliador        Tipo do avaliador (1=TechLead, 2=Gerente, 3=RH)
+	 * @param nomeAvaliador        Nome completo do avaliador
+	 * @param observacoesAvaliador Comentários específicos do avaliador
+	 * @param desempenho           Nota de desempenho (1-5 conforme DesempenhoEnum)
+	 * @param serviceContext       Contexto de serviço com informações de auditoria
+	 * @return O detalhe de avaliação atualizado
+	 * @throws PortalException     se os dados fornecidos forem inválidos
+	 */
+	@Override
+	public br.com.example.model.avaliacao.model.AvaliacaoDetalhe
+			updateAvaliacaoDetalhe(
+				long avaliacaoDetalheId, int tipoAvaliador,
+				String nomeAvaliador, String observacoesAvaliador,
+				int desempenho,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _avaliacaoDetalheLocalService.updateAvaliacaoDetalhe(
+			avaliacaoDetalheId, tipoAvaliador, nomeAvaliador,
+			observacoesAvaliador, desempenho, serviceContext);
 	}
 
 	@Override

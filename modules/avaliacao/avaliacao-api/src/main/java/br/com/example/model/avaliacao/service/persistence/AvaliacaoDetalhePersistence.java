@@ -185,7 +185,7 @@ public interface AvaliacaoDetalhePersistence
 	 * @throws NoSuchAvaliacaoDetalheException if a matching avaliacao detalhe could not be found
 	 */
 	public AvaliacaoDetalhe findByAvaliacaoIdTipoAvaliador(
-			long avaliacaoId, String tipoAvaliador)
+			long avaliacaoId, int tipoAvaliador)
 		throws NoSuchAvaliacaoDetalheException;
 
 	/**
@@ -196,7 +196,7 @@ public interface AvaliacaoDetalhePersistence
 	 * @return the matching avaliacao detalhe, or <code>null</code> if a matching avaliacao detalhe could not be found
 	 */
 	public AvaliacaoDetalhe fetchByAvaliacaoIdTipoAvaliador(
-		long avaliacaoId, String tipoAvaliador);
+		long avaliacaoId, int tipoAvaliador);
 
 	/**
 	 * Returns the avaliacao detalhe where avaliacaoId = &#63; and tipoAvaliador = &#63; or returns <code>null</code> if it could not be found, optionally using the finder cache.
@@ -207,7 +207,7 @@ public interface AvaliacaoDetalhePersistence
 	 * @return the matching avaliacao detalhe, or <code>null</code> if a matching avaliacao detalhe could not be found
 	 */
 	public AvaliacaoDetalhe fetchByAvaliacaoIdTipoAvaliador(
-		long avaliacaoId, String tipoAvaliador, boolean useFinderCache);
+		long avaliacaoId, int tipoAvaliador, boolean useFinderCache);
 
 	/**
 	 * Removes the avaliacao detalhe where avaliacaoId = &#63; and tipoAvaliador = &#63; from the database.
@@ -217,7 +217,7 @@ public interface AvaliacaoDetalhePersistence
 	 * @return the avaliacao detalhe that was removed
 	 */
 	public AvaliacaoDetalhe removeByAvaliacaoIdTipoAvaliador(
-			long avaliacaoId, String tipoAvaliador)
+			long avaliacaoId, int tipoAvaliador)
 		throws NoSuchAvaliacaoDetalheException;
 
 	/**
@@ -228,7 +228,7 @@ public interface AvaliacaoDetalhePersistence
 	 * @return the number of matching avaliacao detalhes
 	 */
 	public int countByAvaliacaoIdTipoAvaliador(
-		long avaliacaoId, String tipoAvaliador);
+		long avaliacaoId, int tipoAvaliador);
 
 	/**
 	 * Caches the avaliacao detalhe in the entity cache if it is enabled.

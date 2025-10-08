@@ -20,7 +20,7 @@ create table DESAFIO_AvaliacaoDetalhe (
 	modifiedDate DATE null,
 	avaliacaoDetalheId LONG not null primary key,
 	avaliacaoId LONG,
-	tipoAvaliador VARCHAR(75) null,
+	tipoAvaliador INTEGER,
 	nomeAvaliador VARCHAR(75) null,
 	observacoesAvaliador VARCHAR(75) null,
 	desempenho INTEGER

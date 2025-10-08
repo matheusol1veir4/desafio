@@ -64,7 +64,7 @@ public class AvaliacaoDetalheModelImpl
 		{"companyId", Types.BIGINT}, {"groupId", Types.BIGINT},
 		{"userId", Types.BIGINT}, {"createDate", Types.TIMESTAMP},
 		{"modifiedDate", Types.TIMESTAMP}, {"avaliacaoDetalheId", Types.BIGINT},
-		{"avaliacaoId", Types.BIGINT}, {"tipoAvaliador", Types.VARCHAR},
+		{"avaliacaoId", Types.BIGINT}, {"tipoAvaliador", Types.INTEGER},
 		{"nomeAvaliador", Types.VARCHAR},
 		{"observacoesAvaliador", Types.VARCHAR}, {"desempenho", Types.INTEGER}
 	};
@@ -80,14 +80,14 @@ public class AvaliacaoDetalheModelImpl
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("avaliacaoDetalheId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("avaliacaoId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("tipoAvaliador", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("tipoAvaliador", Types.INTEGER);
 		TABLE_COLUMNS_MAP.put("nomeAvaliador", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("observacoesAvaliador", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("desempenho", Types.INTEGER);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table DESAFIO_AvaliacaoDetalhe (companyId LONG,groupId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,avaliacaoDetalheId LONG not null primary key,avaliacaoId LONG,tipoAvaliador VARCHAR(75) null,nomeAvaliador VARCHAR(75) null,observacoesAvaliador VARCHAR(75) null,desempenho INTEGER)";
+		"create table DESAFIO_AvaliacaoDetalhe (companyId LONG,groupId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,avaliacaoDetalheId LONG not null primary key,avaliacaoId LONG,tipoAvaliador INTEGER,nomeAvaliador VARCHAR(75) null,observacoesAvaliador VARCHAR(75) null,desempenho INTEGER)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table DESAFIO_AvaliacaoDetalhe";
@@ -303,7 +303,7 @@ public class AvaliacaoDetalheModelImpl
 					AvaliacaoDetalhe::setAvaliacaoId);
 			attributeSetterBiConsumers.put(
 				"tipoAvaliador",
-				(BiConsumer<AvaliacaoDetalhe, String>)
+				(BiConsumer<AvaliacaoDetalhe, Integer>)
 					AvaliacaoDetalhe::setTipoAvaliador);
 			attributeSetterBiConsumers.put(
 				"nomeAvaliador",
@@ -455,17 +455,12 @@ public class AvaliacaoDetalheModelImpl
 	}
 
 	@Override
-	public String getTipoAvaliador() {
-		if (_tipoAvaliador == null) {
-			return "";
-		}
-		else {
-			return _tipoAvaliador;
-		}
+	public int getTipoAvaliador() {
+		return _tipoAvaliador;
 	}
 
 	@Override
-	public void setTipoAvaliador(String tipoAvaliador) {
+	public void setTipoAvaliador(int tipoAvaliador) {
 		if (_columnOriginalValues == Collections.EMPTY_MAP) {
 			_setColumnOriginalValues();
 		}
@@ -478,8 +473,9 @@ public class AvaliacaoDetalheModelImpl
 	 *             #getColumnOriginalValue(String)}
 	 */
 	@Deprecated
-	public String getOriginalTipoAvaliador() {
-		return getColumnOriginalValue("tipoAvaliador");
+	public int getOriginalTipoAvaliador() {
+		return GetterUtil.getInteger(
+			this.<Integer>getColumnOriginalValue("tipoAvaliador"));
 	}
 
 	@Override
@@ -626,7 +622,7 @@ public class AvaliacaoDetalheModelImpl
 		avaliacaoDetalheImpl.setAvaliacaoId(
 			this.<Long>getColumnOriginalValue("avaliacaoId"));
 		avaliacaoDetalheImpl.setTipoAvaliador(
-			this.<String>getColumnOriginalValue("tipoAvaliador"));
+			this.<Integer>getColumnOriginalValue("tipoAvaliador"));
 		avaliacaoDetalheImpl.setNomeAvaliador(
 			this.<String>getColumnOriginalValue("nomeAvaliador"));
 		avaliacaoDetalheImpl.setObservacoesAvaliador(
@@ -741,12 +737,6 @@ public class AvaliacaoDetalheModelImpl
 
 		avaliacaoDetalheCacheModel.tipoAvaliador = getTipoAvaliador();
 
-		String tipoAvaliador = avaliacaoDetalheCacheModel.tipoAvaliador;
-
-		if ((tipoAvaliador != null) && (tipoAvaliador.length() == 0)) {
-			avaliacaoDetalheCacheModel.tipoAvaliador = null;
-		}
-
 		avaliacaoDetalheCacheModel.nomeAvaliador = getNomeAvaliador();
 
 		String nomeAvaliador = avaliacaoDetalheCacheModel.nomeAvaliador;
@@ -839,7 +829,7 @@ public class AvaliacaoDetalheModelImpl
 	private boolean _setModifiedDate;
 	private long _avaliacaoDetalheId;
 	private long _avaliacaoId;
-	private String _tipoAvaliador;
+	private int _tipoAvaliador;
 	private String _nomeAvaliador;
 	private String _observacoesAvaliador;
 	private int _desempenho;

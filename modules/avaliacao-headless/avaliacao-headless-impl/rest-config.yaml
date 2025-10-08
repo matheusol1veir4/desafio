@@ -1,0 +1,9 @@
+apiDir: "../avaliacao-headless-api/src/main/java"
+apiPackagePath: "br.com.desafio.avaliacao.headless"
+application:
+    baseURI: "/avaliacao-headless"
+    className: "AvaliacaoHeadlessApplication"
+    name: "AvaliacaoHeadless"
+author: "sea"
+clientDir: "../avaliacao-headless-client/src/main/java"
+testDir: "../avaliacao-headless-test/src/testIntegration/java"

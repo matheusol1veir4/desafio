@@ -109,13 +109,7 @@ public class AvaliacaoDetalheCacheModel
 
 		avaliacaoDetalheImpl.setAvaliacaoDetalheId(avaliacaoDetalheId);
 		avaliacaoDetalheImpl.setAvaliacaoId(avaliacaoId);
-
-		if (tipoAvaliador == null) {
-			avaliacaoDetalheImpl.setTipoAvaliador("");
-		}
-		else {
-			avaliacaoDetalheImpl.setTipoAvaliador(tipoAvaliador);
-		}
+		avaliacaoDetalheImpl.setTipoAvaliador(tipoAvaliador);
 
 		if (nomeAvaliador == null) {
 			avaliacaoDetalheImpl.setNomeAvaliador("");
@@ -151,7 +145,8 @@ public class AvaliacaoDetalheCacheModel
 		avaliacaoDetalheId = objectInput.readLong();
 
 		avaliacaoId = objectInput.readLong();
-		tipoAvaliador = objectInput.readUTF();
+
+		tipoAvaliador = objectInput.readInt();
 		nomeAvaliador = objectInput.readUTF();
 		observacoesAvaliador = objectInput.readUTF();
 
@@ -172,12 +167,7 @@ public class AvaliacaoDetalheCacheModel
 
 		objectOutput.writeLong(avaliacaoId);
 
-		if (tipoAvaliador == null) {
-			objectOutput.writeUTF("");
-		}
-		else {
-			objectOutput.writeUTF(tipoAvaliador);
-		}
+		objectOutput.writeInt(tipoAvaliador);
 
 		if (nomeAvaliador == null) {
 			objectOutput.writeUTF("");
@@ -203,7 +193,7 @@ public class AvaliacaoDetalheCacheModel
 	public long modifiedDate;
 	public long avaliacaoDetalheId;
 	public long avaliacaoId;
-	public String tipoAvaliador;
+	public int tipoAvaliador;
 	public String nomeAvaliador;
 	public String observacoesAvaliador;
 	public int desempenho;

@@ -129,7 +129,7 @@ public class AvaliacaoDetalhePersistenceTest {
 
 		newAvaliacaoDetalhe.setAvaliacaoId(RandomTestUtil.nextLong());
 
-		newAvaliacaoDetalhe.setTipoAvaliador(RandomTestUtil.randomString());
+		newAvaliacaoDetalhe.setTipoAvaliador(RandomTestUtil.nextInt());
 
 		newAvaliacaoDetalhe.setNomeAvaliador(RandomTestUtil.randomString());
 
@@ -188,11 +188,9 @@ public class AvaliacaoDetalhePersistenceTest {
 	@Test
 	public void testCountByAvaliacaoIdTipoAvaliador() throws Exception {
 		_persistence.countByAvaliacaoIdTipoAvaliador(
-			RandomTestUtil.nextLong(), "");
+			RandomTestUtil.nextLong(), RandomTestUtil.nextInt());
 
-		_persistence.countByAvaliacaoIdTipoAvaliador(0L, "null");
-
-		_persistence.countByAvaliacaoIdTipoAvaliador(0L, (String)null);
+		_persistence.countByAvaliacaoIdTipoAvaliador(0L, 0);
 	}
 
 	@Test
@@ -502,8 +500,8 @@ public class AvaliacaoDetalhePersistenceTest {
 				avaliacaoDetalhe, "getColumnOriginalValue",
 				new Class<?>[] {String.class}, "avaliacaoId"));
 		Assert.assertEquals(
-			avaliacaoDetalhe.getTipoAvaliador(),
-			ReflectionTestUtil.invoke(
+			Integer.valueOf(avaliacaoDetalhe.getTipoAvaliador()),
+			ReflectionTestUtil.<Integer>invoke(
 				avaliacaoDetalhe, "getColumnOriginalValue",
 				new Class<?>[] {String.class}, "tipoAvaliador"));
 	}
@@ -525,7 +523,7 @@ public class AvaliacaoDetalhePersistenceTest {
 
 		avaliacaoDetalhe.setAvaliacaoId(RandomTestUtil.nextLong());
 
-		avaliacaoDetalhe.setTipoAvaliador(RandomTestUtil.randomString());
+		avaliacaoDetalhe.setTipoAvaliador(RandomTestUtil.nextInt());
 
 		avaliacaoDetalhe.setNomeAvaliador(RandomTestUtil.randomString());
 

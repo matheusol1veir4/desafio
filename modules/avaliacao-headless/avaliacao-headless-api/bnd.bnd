@@ -1,0 +1,6 @@
+Bundle-Name: avaliacao-headless-api
+Bundle-SymbolicName: br.com.desafio.avaliacao.headless.api
+Bundle-Version: 1.0.0
+Export-Package:\
+	br.com.desafio.avaliacao.headless.dto.v1_0,\
+	br.com.desafio.avaliacao.headless.resource.v1_0
