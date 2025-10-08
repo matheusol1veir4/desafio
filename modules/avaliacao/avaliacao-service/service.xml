@@ -35,10 +35,10 @@
 		</finder>
 
 		<!-- Consulta por período para relatórios temporais e dashboard -->
-		<finder name="DataAvaliacaoBetween" return-type="Collection">
+		<!-- <finder name="DataAvaliacaoBetween" return-type="Collection">
 			<finder-column name="dataAvaliacao" comparator="&gt;=" />
 			<finder-column name="dataAvaliacao" comparator="&lt;=" />
-		</finder>
+		</finder> -->
 
 		<finder name="AreaAtuacao" return-type="Collection">
 			<finder-column name="areaAtuacao" />

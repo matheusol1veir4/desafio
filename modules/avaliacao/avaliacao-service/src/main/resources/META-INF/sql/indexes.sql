@@ -1,5 +1,4 @@
 create index IX_512F5678 on DESAFIO_Avaliacao (areaAtuacao);
-create index IX_1A20791D on DESAFIO_Avaliacao (dataAvaliacao, dataAvaliacao);
 create unique index IX_CA07164C on DESAFIO_Avaliacao (funcionarioId, periodoDesafio);
 create index IX_292AA7E0 on DESAFIO_Avaliacao (periodoDesafio);
 

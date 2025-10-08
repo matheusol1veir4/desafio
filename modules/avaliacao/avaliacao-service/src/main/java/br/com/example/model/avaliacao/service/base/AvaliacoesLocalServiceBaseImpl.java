@@ -8,8 +8,6 @@ package br.com.example.model.avaliacao.service.base;
 import br.com.example.model.avaliacao.model.Avaliacoes;
 import br.com.example.model.avaliacao.service.AvaliacoesLocalService;
 import br.com.example.model.avaliacao.service.persistence.AvaliacoesPersistence;
-import br.com.example.model.avaliacao.service.persistence.DescricaoDesafioPersistence;
-import br.com.example.model.avaliacao.service.persistence.FuncionarioPersistence;
 
 import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.portal.aop.AopService;
@@ -442,12 +440,6 @@ public abstract class AvaliacoesLocalServiceBaseImpl
 
 	@Reference
 	protected AvaliacoesPersistence avaliacoesPersistence;
-
-	@Reference
-	protected DescricaoDesafioPersistence descricaoDesafioPersistence;
-
-	@Reference
-	protected FuncionarioPersistence funcionarioPersistence;
 
 	@Reference
 	protected com.liferay.counter.kernel.service.CounterLocalService

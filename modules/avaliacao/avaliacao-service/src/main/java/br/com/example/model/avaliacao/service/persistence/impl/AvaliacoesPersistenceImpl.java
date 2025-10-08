@@ -12,7 +12,6 @@ import br.com.example.model.avaliacao.model.impl.AvaliacoesImpl;
 import br.com.example.model.avaliacao.model.impl.AvaliacoesModelImpl;
 import br.com.example.model.avaliacao.service.persistence.AvaliacoesPersistence;
 import br.com.example.model.avaliacao.service.persistence.AvaliacoesUtil;
-import br.com.example.model.avaliacao.service.persistence.impl.constants.FOOPersistenceConstants;
 
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
@@ -2272,32 +2271,6 @@ public class AvaliacoesPersistenceImpl
 		AvaliacoesUtil.setPersistence(null);
 
 		entityCache.removeCache(AvaliacoesImpl.class.getName());
-	}
-
-	@Override
-	@Reference(
-		target = FOOPersistenceConstants.SERVICE_CONFIGURATION_FILTER,
-		unbind = "-"
-	)
-	public void setConfiguration(Configuration configuration) {
-	}
-
-	@Override
-	@Reference(
-		target = FOOPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
-		unbind = "-"
-	)
-	public void setDataSource(DataSource dataSource) {
-		super.setDataSource(dataSource);
-	}
-
-	@Override
-	@Reference(
-		target = FOOPersistenceConstants.ORIGIN_BUNDLE_SYMBOLIC_NAME_FILTER,
-		unbind = "-"
-	)
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		super.setSessionFactory(sessionFactory);
 	}
 
 	@Reference

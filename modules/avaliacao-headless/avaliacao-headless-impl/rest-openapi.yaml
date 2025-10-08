@@ -1,8 +1,540 @@
 info:
-    description: "AvaliacaoHeadless REST API"
-    license:
-        name: "Apache 2.0"
-        url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-    title: "AvaliacaoHeadless"
-    version: v1.0
+  description: "API REST para gerenciamento de avaliações de desafio de colaboradores (30, 60 e 90 dias)"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+  title: "Desafio Avaliacao REST API"
+  version: v1.0
+
 openapi: 3.0.1
+
+# ============================================================
+# SCHEMAS (DTOs) - Estruturas de dados
+# ============================================================
+components:
+  schemas:
+    # ==========================================
+    # DTO: Avaliacao
+    # ==========================================
+    Avaliacao:
+      description: "Representa uma avaliação de desafio (30, 60 ou 90 dias)"
+      type: object
+      properties:
+        avaliacaoId:
+          description: "ID único da avaliação"
+          type: integer
+          format: int64
+          readOnly: true
+        funcionarioId:
+          description: "ID do usuário/funcionário sendo avaliado"
+          type: integer
+          format: int64
+        dataAvaliacao:
+          description: "Data em que a avaliação foi criada"
+          type: string
+          format: date
+        periodoDesafio:
+          description: "Período do desafio: 1=30 dias, 2=60 dias, 3=90 dias"
+          type: integer
+          format: int32
+        observacoesGerais:
+          description: "Observações gerais sobre o desempenho do colaborador"
+          type: string
+        areaAtuacao:
+          description: "Área de atuação: 1=Analista Projeto, 2=Tester, 3=UI, 4=Front-end, 5=Back-end"
+          type: integer
+          format: int32
+
+    # ==========================================
+    # DTO: AvaliacaoDetalhe
+    # ==========================================
+    AvaliacaoDetalhe:
+      description: "Detalhe de avaliação feita por TechLead, Gerente ou RH"
+      type: object
+      properties:
+        avaliacaoDetalheId:
+          description: "ID único do detalhe"
+          type: integer
+          format: int64
+          readOnly: true
+        avaliacaoId:
+          description: "ID da avaliação pai"
+          type: integer
+          format: int64
+        tipoAvaliador:
+          description: "Tipo: 1=TechLead, 2=Gerente, 3=RH"
+          type: integer
+          format: int32
+        nomeAvaliador:
+          description: "Nome completo do avaliador"
+          type: string
+        observacoesAvaliador:
+          description: "Comentários do avaliador sobre o colaborador"
+          type: string
+        desempenho:
+          description: "Nota: 1=Insatisfatório, 2=Regular, 3=Bom, 4=Ótimo, 5=Excelente"
+          type: integer
+          format: int32
+
+    # ==========================================
+    # DTO: AvaliacaoCompleta (DTO Composto)
+    # ==========================================
+    AvaliacaoCompleta:
+      description: "Avaliação completa com todos os detalhes (TechLead, Gerente, RH) em uma única estrutura"
+      type: object
+      properties:
+        avaliacaoId:
+          description: "ID único da avaliação"
+          type: integer
+          format: int64
+          readOnly: true
+        funcionarioId:
+          description: "ID do funcionário avaliado"
+          type: integer
+          format: int64
+        dataAvaliacao:
+          description: "Data da avaliação"
+          type: string
+          format: date
+        periodoDesafio:
+          description: "Período do desafio"
+          type: integer
+          format: int32
+        observacoesGerais:
+          description: "Observações gerais"
+          type: string
+        areaAtuacao:
+          description: "Área de atuação"
+          type: integer
+          format: int32
+        avaliacaoDetalhes:
+          description: "Lista de detalhes de avaliação (TechLead, Gerente, RH)"
+          type: array
+          items:
+            $ref: "#/components/schemas/AvaliacaoDetalhe"
+
+# ============================================================
+# PATHS (ENDPOINTS)
+# ============================================================
+paths:
+  # ==========================================
+  # GRUPO 1: CRUD de Avaliação
+  # ==========================================
+
+  # GET  /o/avaliacao-rest/v1.0/avaliacoes
+  # POST /o/avaliacao-rest/v1.0/avaliacoes
+  "/avaliacoes":
+    get:
+      operationId: getAllAvaliacoes
+      tags: ["Avaliacao"]
+      description: "Lista todas as avaliações do sistema"
+      parameters:
+        - in: query
+          name: page
+          description: "Número da página (paginação)"
+          schema:
+            type: integer
+        - in: query
+          name: pageSize
+          description: "Quantidade de itens por página"
+          schema:
+            type: integer
+      responses:
+        200:
+          description: "Lista de avaliações retornada com sucesso"
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Avaliacao"
+                type: array
+            application/xml:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Avaliacao"
+                type: array
+
+    post:
+      operationId: createAvaliacao
+      tags: ["Avaliacao"]
+      description: "Cria uma nova avaliação"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Avaliacao"
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/Avaliacao"
+      responses:
+        200:
+          description: "Avaliação criada com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Avaliacao"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Avaliacao"
+
+  # GET    /o/avaliacao-rest/v1.0/avaliacoes/{avaliacaoId}
+  # PUT    /o/avaliacao-rest/v1.0/avaliacoes/{avaliacaoId}
+  # DELETE /o/avaliacao-rest/v1.0/avaliacoes/{avaliacaoId}
+  "/avaliacoes/{avaliacaoId}":
+    get:
+      operationId: getAvaliacaoById
+      tags: ["Avaliacao"]
+      description: "Busca uma avaliação específica por ID"
+      parameters:
+        - in: path
+          name: avaliacaoId
+          required: true
+          description: "ID da avaliação"
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: "Avaliação encontrada"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Avaliacao"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Avaliacao"
+        404:
+          description: "Avaliação não encontrada"
+
+    put:
+      operationId: updateAvaliacao
+      tags: ["Avaliacao"]
+      description: "Atualiza uma avaliação existente"
+      parameters:
+        - in: path
+          name: avaliacaoId
+          required: true
+          description: "ID da avaliação a ser atualizada"
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Avaliacao"
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/Avaliacao"
+      responses:
+        200:
+          description: "Avaliação atualizada com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Avaliacao"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Avaliacao"
+        404:
+          description: "Avaliação não encontrada"
+
+    delete:
+      operationId: deleteAvaliacao
+      tags: ["Avaliacao"]
+      description: "Deleta uma avaliação e todos os seus detalhes (cascade delete)"
+      parameters:
+        - in: path
+          name: avaliacaoId
+          required: true
+          description: "ID da avaliação a ser deletada"
+          schema:
+            type: integer
+            format: int64
+      responses:
+        204:
+          description: "Avaliação deletada com sucesso"
+        404:
+          description: "Avaliação não encontrada"
+
+  # ==========================================
+  # GRUPO 2: Consultas Específicas de Avaliação
+  # ==========================================
+
+  # GET /o/avaliacao-rest/v1.0/avaliacoes/funcionario/{funcionarioId}
+  "/avaliacoes/funcionario/{funcionarioId}":
+    get:
+      operationId: getAvaliacoesByFuncionario
+      tags: ["Avaliacao"]
+      description: "Lista todas as avaliações de um funcionário específico"
+      parameters:
+        - in: path
+          name: funcionarioId
+          required: true
+          description: "ID do funcionário"
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: "Lista de avaliações do funcionário"
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Avaliacao"
+                type: array
+            application/xml:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Avaliacao"
+                type: array
+
+  # GET /o/avaliacao-rest/v1.0/avaliacoes/funcionario/{funcionarioId}/periodo/{periodoDesafio}
+  "/avaliacoes/funcionario/{funcionarioId}/periodo/{periodoDesafio}":
+    get:
+      operationId: getAvaliacaoByFuncionarioAndPeriodo
+      tags: ["Avaliacao"]
+      description: "Busca a avaliação específica de um funcionário em um período determinado (30, 60 ou 90 dias)"
+      parameters:
+        - in: path
+          name: funcionarioId
+          required: true
+          description: "ID do funcionário"
+          schema:
+            type: integer
+            format: int64
+        - in: path
+          name: periodoDesafio
+          required: true
+          description: "Período do desafio: 1=30 dias, 2=60 dias, 3=90 dias"
+          schema:
+            type: integer
+            format: int32
+      responses:
+        200:
+          description: "Avaliação encontrada"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Avaliacao"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/Avaliacao"
+        404:
+          description: "Avaliação não encontrada para este funcionário e período"
+
+  # ==========================================
+  # GRUPO 3: CRUD de AvaliacaoDetalhe
+  # ==========================================
+
+  # GET  /o/avaliacao-rest/v1.0/avaliacoes/{avaliacaoId}/detalhes
+  # POST /o/avaliacao-rest/v1.0/avaliacoes/{avaliacaoId}/detalhes
+  "/avaliacoes/{avaliacaoId}/detalhes":
+    get:
+      operationId: getAllAvaliacaoDetalhes
+      tags: ["AvaliacaoDetalhe"]
+      description: "Lista todos os detalhes (TechLead, Gerente, RH) de uma avaliação específica"
+      parameters:
+        - in: path
+          name: avaliacaoId
+          required: true
+          description: "ID da avaliação"
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: "Lista de detalhes da avaliação"
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/AvaliacaoDetalhe"
+                type: array
+            application/xml:
+              schema:
+                items:
+                  $ref: "#/components/schemas/AvaliacaoDetalhe"
+                type: array
+
+    post:
+      operationId: createAvaliacaoDetalhe
+      tags: ["AvaliacaoDetalhe"]
+      description: "Adiciona um novo detalhe à avaliação (TechLead, Gerente ou RH)"
+      parameters:
+        - in: path
+          name: avaliacaoId
+          required: true
+          description: "ID da avaliação"
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AvaliacaoDetalhe"
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/AvaliacaoDetalhe"
+      responses:
+        200:
+          description: "Detalhe criado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvaliacaoDetalhe"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/AvaliacaoDetalhe"
+
+  # PUT    /o/avaliacao-rest/v1.0/detalhes/{avaliacaoDetalheId}
+  # DELETE /o/avaliacao-rest/v1.0/detalhes/{avaliacaoDetalheId}
+  "/detalhes/{avaliacaoDetalheId}":
+    put:
+      operationId: updateAvaliacaoDetalhe
+      tags: ["AvaliacaoDetalhe"]
+      description: "Atualiza um detalhe específico de avaliação"
+      parameters:
+        - in: path
+          name: avaliacaoDetalheId
+          required: true
+          description: "ID do detalhe"
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AvaliacaoDetalhe"
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/AvaliacaoDetalhe"
+      responses:
+        200:
+          description: "Detalhe atualizado com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvaliacaoDetalhe"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/AvaliacaoDetalhe"
+        404:
+          description: "Detalhe não encontrado"
+
+    delete:
+      operationId: deleteAvaliacaoDetalhe
+      tags: ["AvaliacaoDetalhe"]
+      description: "Deleta um detalhe específico de avaliação"
+      parameters:
+        - in: path
+          name: avaliacaoDetalheId
+          required: true
+          description: "ID do detalhe a ser deletado"
+          schema:
+            type: integer
+            format: int64
+      responses:
+        204:
+          description: "Detalhe deletado com sucesso"
+        404:
+          description: "Detalhe não encontrado"
+
+  # ==========================================
+  # GRUPO 4: Endpoints de Avaliação Completa
+  # ==========================================
+
+  # POST /o/avaliacao-rest/v1.0/avaliacoes/completa
+  "/avaliacoes/completa":
+    post:
+      operationId: createAvaliacaoCompleta
+      tags: ["Avaliacao"]
+      description: "Cria uma avaliação completa (avaliação + todos os detalhes) em uma única requisição"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AvaliacaoCompleta"
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/AvaliacaoCompleta"
+      responses:
+        200:
+          description: "Avaliação completa criada com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvaliacaoCompleta"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/AvaliacaoCompleta"
+
+  # GET /o/avaliacao-rest/v1.0/avaliacoes/{avaliacaoId}/completa
+  # PUT /o/avaliacao-rest/v1.0/avaliacoes/{avaliacaoId}/completa
+  "/avaliacoes/{avaliacaoId}/completa":
+    get:
+      operationId: getAvaliacaoCompletaById
+      tags: ["Avaliacao"]
+      description: "Busca uma avaliação completa (com todos os detalhes) por ID"
+      parameters:
+        - in: path
+          name: avaliacaoId
+          required: true
+          description: "ID da avaliação"
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: "Avaliação completa encontrada"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvaliacaoCompleta"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/AvaliacaoCompleta"
+        404:
+          description: "Avaliação não encontrada"
+
+    put:
+      operationId: updateAvaliacaoCompleta
+      tags: ["Avaliacao"]
+      description: "Atualiza uma avaliação completa (avaliação + detalhes) em uma única requisição"
+      parameters:
+        - in: path
+          name: avaliacaoId
+          required: true
+          description: "ID da avaliação a ser atualizada"
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AvaliacaoCompleta"
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/AvaliacaoCompleta"
+      responses:
+        200:
+          description: "Avaliação completa atualizada com sucesso"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvaliacaoCompleta"
+            application/xml:
+              schema:
+                $ref: "#/components/schemas/AvaliacaoCompleta"
+        404:
+          description: "Avaliação não encontrada"

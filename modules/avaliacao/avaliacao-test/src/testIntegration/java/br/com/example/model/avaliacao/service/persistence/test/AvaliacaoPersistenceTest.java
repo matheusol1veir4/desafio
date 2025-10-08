@@ -195,15 +195,6 @@ public class AvaliacaoPersistenceTest {
 	}
 
 	@Test
-	public void testCountByDataAvaliacaoBetween() throws Exception {
-		_persistence.countByDataAvaliacaoBetween(
-			RandomTestUtil.nextDate(), RandomTestUtil.nextDate());
-
-		_persistence.countByDataAvaliacaoBetween(
-			RandomTestUtil.nextDate(), RandomTestUtil.nextDate());
-	}
-
-	@Test
 	public void testCountByAreaAtuacao() throws Exception {
 		_persistence.countByAreaAtuacao(RandomTestUtil.nextInt());
 
