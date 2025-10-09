@@ -2,6 +2,7 @@ dependencies {
 	api project(":modules:avaliacao-headless:avaliacao-headless-api")
 
 	compileOnly group: "com.liferay.portal", name: "release.portal.api"
+	compileOnly project(":modules:avaliacao:avaliacao-api")
 }
 
 group = "br.com.desafio.avaliacao.headless"

@@ -3,6 +3,7 @@ Bundle-SymbolicName: br.com.example.model.avaliacao.api
 Bundle-Version: 1.0.0
 Export-Package:\
 	br.com.example.model.avaliacao.exception,\
+    br.com.example.model.avaliacao.enums,\
 	br.com.example.model.avaliacao.model,\
 	br.com.example.model.avaliacao.service,\
 	br.com.example.model.avaliacao.service.persistence
