@@ -34,11 +34,6 @@
 			<finder-column name="periodoDesafio" />
 		</finder>
 
-		<!-- Consulta por período para relatórios temporais e dashboard -->
-		<!-- <finder name="DataAvaliacaoBetween" return-type="Collection">
-			<finder-column name="dataAvaliacao" comparator="&gt;=" />
-			<finder-column name="dataAvaliacao" comparator="&lt;=" />
-		</finder> -->
 
 		<finder name="AreaAtuacao" return-type="Collection">
 			<finder-column name="areaAtuacao" />
@@ -64,6 +59,14 @@
 
 		<finder name="AvaliacaoId" return-type="Collection">
 			<finder-column name="avaliacaoId" />
+		</finder>
+
+		<finder name="TipoAvaliador" return-type="Collection">
+			<finder-column name="tipoAvaliador" />
+		</finder>
+
+		<finder name="Desempenho" return-type="Collection">
+			<finder-column name="desempenho" />
 		</finder>
 
 		<!-- Busca a avaliação específica de um avaliador para um ciclo - deve ser único -->

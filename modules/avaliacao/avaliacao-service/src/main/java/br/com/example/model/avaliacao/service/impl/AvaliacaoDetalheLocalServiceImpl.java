@@ -21,6 +21,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Brian Wing Shun Chan
@@ -32,6 +33,42 @@ import java.util.Date;
 
 public class AvaliacaoDetalheLocalServiceImpl
 	extends AvaliacaoDetalheLocalServiceBaseImpl {
+
+
+	/**
+	 * Busca todos os detalhes de uma avaliação específica.
+	 * MÉTODO CRÍTICO - usado pela API REST.
+	 *
+	 * @param avaliacaoId ID da avaliação pai
+	 * @return lista de detalhes da avaliação
+	 */
+	@Override
+	public List<AvaliacaoDetalhe> findByAvaliacaoId(long avaliacaoId) {
+		return avaliacaoDetalhePersistence.findByAvaliacaoId(avaliacaoId);
+	}
+
+	/**
+	 * Busca detalhes por tipo de avaliador.
+	 *
+	 * @param tipoAvaliador tipo do avaliador (1=TechLead, 2=Gerente, 3=RH)
+	 * @return lista de detalhes do tipo de avaliador
+	 */
+	@Override
+	public List<AvaliacaoDetalhe> findByTipoAvaliador(int tipoAvaliador) {
+		return avaliacaoDetalhePersistence.findByTipoAvaliador(tipoAvaliador);
+	}
+
+	/**
+	 * Busca detalhes por nota de desempenho.
+	 *
+	 * @param desempenho nota de desempenho (1-5)
+	 * @return lista de detalhes com a nota específica
+	 */
+	@Override
+	public List<AvaliacaoDetalhe> findByDesempenho(int desempenho) {
+		return avaliacaoDetalhePersistence.findByDesempenho(desempenho);
+	}
+
 
 
 	/**

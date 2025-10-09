@@ -214,6 +214,31 @@ public interface AvaliacaoDetalheLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public AvaliacaoDetalhe fetchAvaliacaoDetalhe(long avaliacaoDetalheId);
 
+	/**
+	 * Busca todos os detalhes de uma avaliação específica.
+	 * MÉTODO CRÍTICO - usado pela API REST.
+	 *
+	 * @param avaliacaoId ID da avaliação pai
+	 * @return lista de detalhes da avaliação
+	 */
+	public List<AvaliacaoDetalhe> findByAvaliacaoId(long avaliacaoId);
+
+	/**
+	 * Busca detalhes por nota de desempenho.
+	 *
+	 * @param desempenho nota de desempenho (1-5)
+	 * @return lista de detalhes com a nota específica
+	 */
+	public List<AvaliacaoDetalhe> findByDesempenho(int desempenho);
+
+	/**
+	 * Busca detalhes por tipo de avaliador.
+	 *
+	 * @param tipoAvaliador tipo do avaliador (1=TechLead, 2=Gerente, 3=RH)
+	 * @return lista de detalhes do tipo de avaliador
+	 */
+	public List<AvaliacaoDetalhe> findByTipoAvaliador(int tipoAvaliador);
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
 

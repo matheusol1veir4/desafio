@@ -33,6 +33,47 @@ import java.util.Optional;
 )
 public class AvaliacaoLocalServiceImpl extends AvaliacaoLocalServiceBaseImpl {
 
+	@Override
+	public List<Avaliacao> findByFuncionarioId (long funcionarioId) {;
+
+		return avaliacaoPersistence.findByFuncionarioId(funcionarioId);
+	}
+
+	/**
+	 * Busca avaliação específica de um funcionário em determinado período.
+	 * Deve ser único por regra de negócio (um funcionário só pode ter uma avaliação por período).
+	 *
+	 * @param funcionarioId ID do funcionário
+	 * @param periodoDesafio período do desafio (30, 60 ou 90 dias)
+	 * @return avaliação encontrada ou null se não existir
+	 */
+	@Override
+	public Avaliacao findByFuncionarioIdAndPeriodoDesafio(long funcionarioId, int periodoDesafio) {
+		return avaliacaoPersistence.fetchByFuncionarioIdPeriodoDesafio(funcionarioId, periodoDesafio);
+	}
+
+	/**
+	 * Busca todas as avaliações de um período específico.
+	 *
+	 * @param periodoDesafio período do desafio (1=30, 2=60, 3=90 dias)
+	 * @return lista de avaliações do período
+	 */
+	@Override
+	public List<Avaliacao> findByPeriodoDesafio(int periodoDesafio) {
+		return avaliacaoPersistence.findByPeriodoDesafio(periodoDesafio);
+	}
+
+	/**
+	 * Busca avaliações por área de atuação.
+	 *
+	 * @param areaAtuacao área de atuação (1=Analista, 2=Tester, 3=UI, etc.)
+	 * @return lista de avaliações da área
+	 */
+	@Override
+	public List<Avaliacao> findByAreaAtuacao(int areaAtuacao) {
+		return avaliacaoPersistence.findByAreaAtuacao(areaAtuacao);
+	}
+
 	/**
 	 * Cria uma nova avaliação de desafio para um funcionário.
 	 *

@@ -186,6 +186,20 @@ public class AvaliacaoDetalhePersistenceTest {
 	}
 
 	@Test
+	public void testCountByTipoAvaliador() throws Exception {
+		_persistence.countByTipoAvaliador(RandomTestUtil.nextInt());
+
+		_persistence.countByTipoAvaliador(0);
+	}
+
+	@Test
+	public void testCountByDesempenho() throws Exception {
+		_persistence.countByDesempenho(RandomTestUtil.nextInt());
+
+		_persistence.countByDesempenho(0);
+	}
+
+	@Test
 	public void testCountByAvaliacaoIdTipoAvaliador() throws Exception {
 		_persistence.countByAvaliacaoIdTipoAvaliador(
 			RandomTestUtil.nextLong(), RandomTestUtil.nextInt());

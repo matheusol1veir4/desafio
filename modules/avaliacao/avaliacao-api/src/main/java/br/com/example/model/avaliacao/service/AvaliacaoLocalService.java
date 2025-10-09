@@ -211,6 +211,35 @@ public interface AvaliacaoLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Avaliacao fetchAvaliacao(long avaliacaoId);
 
+	/**
+	 * Busca avaliações por área de atuação.
+	 *
+	 * @param areaAtuacao área de atuação (1=Analista, 2=Tester, 3=UI, etc.)
+	 * @return lista de avaliações da área
+	 */
+	public List<Avaliacao> findByAreaAtuacao(int areaAtuacao);
+
+	public List<Avaliacao> findByFuncionarioId(long funcionarioId);
+
+	/**
+	 * Busca avaliação específica de um funcionário em determinado período.
+	 * Deve ser único por regra de negócio (um funcionário só pode ter uma avaliação por período).
+	 *
+	 * @param funcionarioId ID do funcionário
+	 * @param periodoDesafio período do desafio (30, 60 ou 90 dias)
+	 * @return avaliação encontrada ou null se não existir
+	 */
+	public Avaliacao findByFuncionarioIdAndPeriodoDesafio(
+		long funcionarioId, int periodoDesafio);
+
+	/**
+	 * Busca todas as avaliações de um período específico.
+	 *
+	 * @param periodoDesafio período do desafio (1=30, 2=60, 3=90 dias)
+	 * @return lista de avaliações do período
+	 */
+	public List<Avaliacao> findByPeriodoDesafio(int periodoDesafio);
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
 

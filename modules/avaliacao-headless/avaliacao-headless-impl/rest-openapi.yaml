@@ -32,7 +32,7 @@ components:
         dataAvaliacao:
           description: "Data em que a avaliação foi criada"
           type: string
-          format: date
+          format: date-time
         periodoDesafio:
           description: "Período do desafio: 1=30 dias, 2=60 dias, 3=90 dias"
           type: integer
@@ -95,7 +95,7 @@ components:
         dataAvaliacao:
           description: "Data da avaliação"
           type: string
-          format: date
+          format: date-time
         periodoDesafio:
           description: "Período do desafio"
           type: integer

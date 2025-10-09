@@ -225,6 +225,45 @@ public class AvaliacaoLocalServiceUtil {
 		return getService().fetchAvaliacao(avaliacaoId);
 	}
 
+	/**
+	 * Busca avaliações por área de atuação.
+	 *
+	 * @param areaAtuacao área de atuação (1=Analista, 2=Tester, 3=UI, etc.)
+	 * @return lista de avaliações da área
+	 */
+	public static List<Avaliacao> findByAreaAtuacao(int areaAtuacao) {
+		return getService().findByAreaAtuacao(areaAtuacao);
+	}
+
+	public static List<Avaliacao> findByFuncionarioId(long funcionarioId) {
+		return getService().findByFuncionarioId(funcionarioId);
+	}
+
+	/**
+	 * Busca avaliação específica de um funcionário em determinado período.
+	 * Deve ser único por regra de negócio (um funcionário só pode ter uma avaliação por período).
+	 *
+	 * @param funcionarioId ID do funcionário
+	 * @param periodoDesafio período do desafio (30, 60 ou 90 dias)
+	 * @return avaliação encontrada ou null se não existir
+	 */
+	public static Avaliacao findByFuncionarioIdAndPeriodoDesafio(
+		long funcionarioId, int periodoDesafio) {
+
+		return getService().findByFuncionarioIdAndPeriodoDesafio(
+			funcionarioId, periodoDesafio);
+	}
+
+	/**
+	 * Busca todas as avaliações de um período específico.
+	 *
+	 * @param periodoDesafio período do desafio (1=30, 2=60, 3=90 dias)
+	 * @return lista de avaliações do período
+	 */
+	public static List<Avaliacao> findByPeriodoDesafio(int periodoDesafio) {
+		return getService().findByPeriodoDesafio(periodoDesafio);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 
