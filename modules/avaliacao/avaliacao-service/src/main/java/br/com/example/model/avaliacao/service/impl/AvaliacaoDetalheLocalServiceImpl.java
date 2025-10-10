@@ -9,16 +9,13 @@ import br.com.example.model.avaliacao.enums.DesempenhoEnum;
 import br.com.example.model.avaliacao.enums.TipoAvaliadorEnum;
 import br.com.example.model.avaliacao.model.Avaliacao;
 import br.com.example.model.avaliacao.model.AvaliacaoDetalhe;
-import br.com.example.model.avaliacao.service.AvaliacaoLocalService;
 import br.com.example.model.avaliacao.service.base.AvaliacaoDetalheLocalServiceBaseImpl;
-
 import com.liferay.portal.aop.AopService;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 import java.util.Date;
 import java.util.List;
@@ -37,7 +34,6 @@ public class AvaliacaoDetalheLocalServiceImpl
 
 	/**
 	 * Busca todos os detalhes de uma avaliação específica.
-	 * MÉTODO CRÍTICO - usado pela API REST.
 	 *
 	 * @param avaliacaoId ID da avaliação pai
 	 * @return lista de detalhes da avaliação
@@ -68,9 +64,6 @@ public class AvaliacaoDetalheLocalServiceImpl
 	public List<AvaliacaoDetalhe> findByDesempenho(int desempenho) {
 		return avaliacaoDetalhePersistence.findByDesempenho(desempenho);
 	}
-
-
-
 	/**
 	 * Adiciona um detalhe de avaliação vinculado a uma avaliação existente.
 	 *
@@ -141,7 +134,7 @@ public class AvaliacaoDetalheLocalServiceImpl
 		AvaliacaoDetalhe avaliacaoDetalhe = avaliacaoDetalhePersistence.findByPrimaryKey(avaliacaoDetalheId);
 
 		// 2. Busca a avaliação para validação
-		Avaliacao avaliacao = avaliacaoLocalService.getAvaliacao(avaliacaoDetalhe.getAvaliacaoId());
+		Avaliacao avaliacao = avaliacaoPersistence.fetchByPrimaryKey(avaliacaoDetalhe.getAvaliacaoId());
 
 		// 3. Valida os novos dados
 		validateAvaliacaoDetalheFields(avaliacao, tipoAvaliador, nomeAvaliador, observacoesAvaliador, desempenho);
@@ -223,8 +216,7 @@ public class AvaliacaoDetalheLocalServiceImpl
 		}
 	}
 
-	@Reference
-	private AvaliacaoLocalService avaliacaoLocalService;
+
 
 	}
 

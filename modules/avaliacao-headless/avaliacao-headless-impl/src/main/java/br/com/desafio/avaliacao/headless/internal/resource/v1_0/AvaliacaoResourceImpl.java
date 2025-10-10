@@ -3,7 +3,6 @@ package br.com.desafio.avaliacao.headless.internal.resource.v1_0;
 import br.com.desafio.avaliacao.headless.dto.v1_0.Avaliacao;
 import br.com.desafio.avaliacao.headless.resource.v1_0.AvaliacaoResource;
 import br.com.example.model.avaliacao.service.AvaliacaoLocalService;
-
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.PortalUtil;

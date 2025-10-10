@@ -1,5 +1,0 @@
-Bundle-Name: avaliacao-headless-test
-Bundle-SymbolicName: br.com.desafio.avaliacao.headless.test
-Bundle-Version: 1.0.0
--includeresource: br.com.desafio.avaliacao.headless.client.jar=../avaliacao-headless-client/build/libs/br.com.desafio.avaliacao.headless.client-1.0.0.jar;lib:=true
--provider-policy: ${replacestring;${range;[==,==]};.*,(.*)];$1}

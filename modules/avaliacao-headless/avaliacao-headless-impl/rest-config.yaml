@@ -6,4 +6,3 @@ application:
     name: "AvaliacaoHeadless"
 author: "sea"
 clientDir: "../avaliacao-headless-client/src/main/java"
-testDir: "../avaliacao-headless-test/src/testIntegration/java"

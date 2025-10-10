@@ -17,7 +17,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 import javax.ws.rs.NotFoundException;
 import java.util.Date;
@@ -196,7 +195,7 @@ public class AvaliacaoLocalServiceImpl extends AvaliacaoLocalServiceBaseImpl {
 
 		// Deleta cada detalhe individualmente
 		for (AvaliacaoDetalhe detalhe : detalhes) {
-			avaliacaoDetalheLocalService.deleteAvaliacaoDetalhe(detalhe.getAvaliacaoDetalheId());
+			avaliacaoDetalhePersistence.remove(detalhe.getAvaliacaoDetalheId());
 		}
 	}
 
@@ -239,7 +238,6 @@ public class AvaliacaoLocalServiceImpl extends AvaliacaoLocalServiceBaseImpl {
 
 	}
 
-	@Reference
-	private AvaliacaoDetalheLocalServiceImpl avaliacaoDetalheLocalService;
+
 
 }

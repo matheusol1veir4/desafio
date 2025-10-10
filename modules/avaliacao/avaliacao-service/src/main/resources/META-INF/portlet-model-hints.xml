@@ -11,7 +11,9 @@
 		<field name="funcionarioId" type="long" />
 		<field name="dataAvaliacao" type="Date" />
 		<field name="periodoDesafio" type="int" />
-		<field name="observacoesGerais" type="String" />
+		<field name="observacoesGerais" type="String">
+			<hint name="max-length">500</hint>
+		</field>
 		<field name="areaAtuacao" type="int" />
 	</model>
 	<model name="br.com.example.model.avaliacao.model.AvaliacaoDetalhe">
