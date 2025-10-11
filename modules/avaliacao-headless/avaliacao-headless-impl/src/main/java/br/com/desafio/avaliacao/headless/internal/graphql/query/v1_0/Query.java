@@ -167,6 +167,26 @@ public class Query {
 				avaliacaoDetalheResource.getAllAvaliacaoDetalhes(avaliacaoId)));
 	}
 
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {avaliacaoDetalheById(avaliacaoDetalheId: ___){avaliacaoDetalheId, avaliacaoId, tipoAvaliador, nomeAvaliador, observacoesAvaliador, desempenho}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(
+		description = "Busca um detalhe específico de avaliação por ID"
+	)
+	public AvaliacaoDetalhe avaliacaoDetalheById(
+			@GraphQLName("avaliacaoDetalheId") Long avaliacaoDetalheId)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_avaliacaoDetalheResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			avaliacaoDetalheResource ->
+				avaliacaoDetalheResource.getAvaliacaoDetalheById(
+					avaliacaoDetalheId));
+	}
+
 	@GraphQLTypeExtension(Avaliacao.class)
 	public class GetAvaliacaoCompletaByIdTypeExtension {
 

@@ -224,6 +224,41 @@ public abstract class BaseAvaliacaoDetalheResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
+	 * curl -X 'GET' 'http://localhost:8080/o/avaliacao-headless/v1.0/detalhes/{avaliacaoDetalheId}'  -u 'test@liferay.com:test'
+	 */
+	@io.swagger.v3.oas.annotations.Operation(
+		description = "Busca um detalhe específico de avaliação por ID"
+	)
+	@io.swagger.v3.oas.annotations.Parameters(
+		value = {
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+				name = "avaliacaoDetalheId"
+			)
+		}
+	)
+	@io.swagger.v3.oas.annotations.tags.Tags(
+		value = {
+			@io.swagger.v3.oas.annotations.tags.Tag(name = "AvaliacaoDetalhe")
+		}
+	)
+	@javax.ws.rs.GET
+	@javax.ws.rs.Path("/detalhes/{avaliacaoDetalheId}")
+	@javax.ws.rs.Produces({"application/json", "application/xml"})
+	@Override
+	public AvaliacaoDetalhe getAvaliacaoDetalheById(
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@javax.validation.constraints.NotNull
+			@javax.ws.rs.PathParam("avaliacaoDetalheId")
+			Long avaliacaoDetalheId)
+		throws Exception {
+
+		return new AvaliacaoDetalhe();
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
 	 * curl -X 'PUT' 'http://localhost:8080/o/avaliacao-headless/v1.0/detalhes/{avaliacaoDetalheId}' -d $'{"avaliacaoId": ___, "desempenho": ___, "nomeAvaliador": ___, "observacoesAvaliador": ___, "tipoAvaliador": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Operation(

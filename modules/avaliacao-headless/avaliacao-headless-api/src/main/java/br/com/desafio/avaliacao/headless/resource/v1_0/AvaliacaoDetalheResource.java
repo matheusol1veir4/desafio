@@ -56,6 +56,9 @@ public interface AvaliacaoDetalheResource {
 			String callbackURL, Object object)
 		throws Exception;
 
+	public AvaliacaoDetalhe getAvaliacaoDetalheById(Long avaliacaoDetalheId)
+		throws Exception;
+
 	public AvaliacaoDetalhe updateAvaliacaoDetalhe(
 			Long avaliacaoDetalheId, AvaliacaoDetalhe avaliacaoDetalhe)
 		throws Exception;

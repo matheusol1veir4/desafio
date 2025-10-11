@@ -1,7 +1,10 @@
 package br.com.desafio.avaliacao.headless.internal.resource.v1_0;
 
 import br.com.desafio.avaliacao.headless.dto.v1_0.Avaliacao;
+import br.com.desafio.avaliacao.headless.dto.v1_0.AvaliacaoCompleta;
+import br.com.desafio.avaliacao.headless.internal.converter.ConverterDto;
 import br.com.desafio.avaliacao.headless.resource.v1_0.AvaliacaoResource;
+import br.com.example.model.avaliacao.service.AvaliacaoDetalheLocalService;
 import br.com.example.model.avaliacao.service.AvaliacaoLocalService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -15,7 +18,7 @@ import org.osgi.service.component.annotations.ServiceScope;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 /**
  * Resource implementation para gerenciamento de avaliações via REST API.
@@ -28,6 +31,26 @@ import java.util.stream.Collectors;
 		service = AvaliacaoResource.class
 )
 public class AvaliacaoResourceImpl extends BaseAvaliacaoResourceImpl {
+
+
+
+	/**
+	 * Busca uma avaliação específica por ID.
+	 *
+	 * @param avaliacaoId ID da avaliação
+	 * @return DTO da avaliação encontrada
+	 * @throws PortalException se a avaliação não for encontrada
+	 */
+	@Override
+	public Avaliacao getAvaliacaoById(Long avaliacaoId) throws PortalException {
+
+		// Busca avaliação no banco via LocalService
+		br.com.example.model.avaliacao.model.Avaliacao entity =
+				_avaliacaoLocalService.getAvaliacao(avaliacaoId);
+
+		return ConverterDto.entityToDto(entity); // Converte entity para DTO
+	}
+
 
 	/**
 	 * Busca todas as avaliações de um funcionário específico.
@@ -49,13 +72,57 @@ public class AvaliacaoResourceImpl extends BaseAvaliacaoResourceImpl {
 			return Page.of(new ArrayList<>());
 		}
 
-		// Converte entidades para DTOs usando stream
-		List<Avaliacao> dtos = entities.stream()
-				.map(this::convertEntityToDTO)  // Mapeia cada entity para DTO
-				.collect(Collectors.toList());  // Coleta em lista
+		List<Avaliacao> dtos = ConverterDto.entityListToDtoList(entities);
 
-		return Page.of(dtos);  // Retorna página com DTOs
+		return Page.of(dtos); // Retorna página com DTOs
 	}
+
+	/**
+	 * Busca a avaliação específica de um funcionário em determinado período.
+	 *
+	 * @param funcionarioId ID do funcionário
+	 * @param periodoDesafio período do desafio (1=30, 2=60, 3=90 dias)
+	 * @return DTO da avaliação encontrada
+	 * @throws PortalException se a avaliação não for encontrada
+	 */
+	@Override
+	public Avaliacao getAvaliacaoByFuncionarioAndPeriodo(Long funcionarioId, Integer periodoDesafio)
+			throws PortalException {
+
+		// Busca avaliação no banco via LocalService
+		br.com.example.model.avaliacao.model.Avaliacao entity =
+				_avaliacaoLocalService.findByFuncionarioIdAndPeriodoDesafio(funcionarioId, periodoDesafio);
+
+		if (entity == null) {
+			throw new PortalException("Avaliação não encontrada para funcionário " + funcionarioId +
+					" no período " + periodoDesafio);
+		}
+
+		return convertEntityToDTO(entity); // Converte entity para DTO
+	}
+
+	/**
+	 * Busca avaliação completa com todos os detalhes de avaliadores.
+	 *
+	 * @param avaliacaoId ID da avaliação
+	 * @return AvaliacaoCompleta DTO com avaliação + array de detalhes
+	 * @throws PortalException se a avaliação não existir
+	 */
+	@Override
+	public AvaliacaoCompleta getAvaliacaoCompletaById(Long avaliacaoId) throws PortalException {
+
+		// 1. Busca a avaliação principal
+		br.com.example.model.avaliacao.model.Avaliacao avaliacaoEntity =
+				_avaliacaoLocalService.getAvaliacao(avaliacaoId);
+
+		// 2. Busca TODOS os detalhes relacionados
+		List<br.com.example.model.avaliacao.model.AvaliacaoDetalhe> detalhesEntities =
+				_avaliacaoDetalheLocalService.findByAvaliacaoId(avaliacaoId);
+
+		// 3. NOVO: Usa ConverterDto para montar DTO composto
+		return ConverterDto.toAvaliacaoCompleta(avaliacaoEntity, detalhesEntities);
+	}
+
 
 	/**
 	 * Cria uma nova avaliação de desafio para um funcionário.
@@ -78,7 +145,7 @@ public class AvaliacaoResourceImpl extends BaseAvaliacaoResourceImpl {
 						createServiceContext()               // Contexto da requisição
 				);
 
-		return convertEntityToDTO(entity);  // Converte entity salva para DTO
+		return ConverterDto.entityToDto(entity);  // Converte entity salva para DTO
 	}
 
 	/**
@@ -180,4 +247,8 @@ public class AvaliacaoResourceImpl extends BaseAvaliacaoResourceImpl {
 
 	@Reference
 	private AvaliacaoLocalService _avaliacaoLocalService;
+
+	@Reference
+	private AvaliacaoDetalheLocalService _avaliacaoDetalheLocalService;
+
 }

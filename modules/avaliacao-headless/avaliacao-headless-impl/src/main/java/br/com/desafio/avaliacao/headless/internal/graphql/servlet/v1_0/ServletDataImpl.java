@@ -153,6 +153,11 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							AvaliacaoDetalheResourceImpl.class,
 							"getAllAvaliacaoDetalhes"));
+					put(
+						"query#avaliacaoDetalheById",
+						new ObjectValuePair<>(
+							AvaliacaoDetalheResourceImpl.class,
+							"getAvaliacaoDetalheById"));
 
 					put(
 						"query#Avaliacao.completaById",

@@ -1,6 +1,7 @@
 package br.com.desafio.avaliacao.headless.internal.resource.v1_0;
 
 import br.com.desafio.avaliacao.headless.dto.v1_0.AvaliacaoDetalhe;
+import br.com.desafio.avaliacao.headless.internal.converter.ConverterDto;
 import br.com.desafio.avaliacao.headless.resource.v1_0.AvaliacaoDetalheResource;
 import br.com.example.model.avaliacao.service.AvaliacaoLocalService;
 import br.com.example.model.avaliacao.service.AvaliacaoDetalheLocalService;
@@ -15,9 +16,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
 
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Resource implementation para gerenciamento de detalhes de avaliação via REST API.
@@ -46,17 +45,27 @@ public class AvaliacaoDetalheResourceImpl extends BaseAvaliacaoDetalheResourceIm
 		List<br.com.example.model.avaliacao.model.AvaliacaoDetalhe> entities =
 				_avaliacaoDetalheLocalService.findByAvaliacaoId(avaliacaoId);
 
-		// Retorna página vazia se não houver dados
-		if (entities == null || entities.isEmpty()) {
-			return Page.of(new ArrayList<>());
-		}
-
-		// Converte entidades para DTOs usando stream
-		List<AvaliacaoDetalhe> dtos = entities.stream()
-				.map(this::convertEntityToDTO)  // Mapeia cada entity para DTO
-				.collect(Collectors.toList());  // Coleta em lista
+		List<AvaliacaoDetalhe> dtos = ConverterDto.detalheEntityListToDtoList(entities);  // Coleta em lista
 
 		return Page.of(dtos);  // Retorna página com DTOs
+	}
+
+	/**
+	 * Busca um detalhe específico por ID.
+	 *
+	 * @param avaliacaoDetalheId ID do detalhe
+	 * @return DTO do detalhe encontrado
+	 * @throws PortalException se o detalhe não for encontrado
+	 */
+	@Override
+	public AvaliacaoDetalhe getAvaliacaoDetalheById(Long avaliacaoDetalheId)
+			throws PortalException {
+
+		// Busca detalhe no banco via LocalService
+		br.com.example.model.avaliacao.model.AvaliacaoDetalhe entity =
+				_avaliacaoDetalheLocalService.getAvaliacaoDetalhe(avaliacaoDetalheId);
+
+		return ConverterDto.detalheEntityToDto(entity); // Converte entity para DTO
 	}
 
 	/**
@@ -86,7 +95,7 @@ public class AvaliacaoDetalheResourceImpl extends BaseAvaliacaoDetalheResourceIm
 						createServiceContext()                   // Contexto da requisição
 				);
 
-		return convertEntityToDTO(entity);  // Converte entity salva para DTO
+		return ConverterDto.detalheEntityToDto(entity);
 	}
 
 	/**
@@ -112,7 +121,7 @@ public class AvaliacaoDetalheResourceImpl extends BaseAvaliacaoDetalheResourceIm
 						createServiceContext()                   // Contexto da requisição
 				);
 
-		return convertEntityToDTO(entity);  // Retorna DTO atualizado
+		return ConverterDto.detalheEntityToDto(entity);  // Retorna DTO atualizado
 	}
 
 	/**
@@ -131,26 +140,6 @@ public class AvaliacaoDetalheResourceImpl extends BaseAvaliacaoDetalheResourceIm
 		return Response.noContent().build();  // HTTP 204 No Content
 	}
 
-	/**
-	 * Converte entidade de domínio para DTO REST.
-	 *
-	 * @param entity entidade de domínio AvaliacaoDetalhe do banco
-	 * @return DTO AvaliacaoDetalhe pronto para serialização JSON/XML
-	 */
-	private AvaliacaoDetalhe convertEntityToDTO(
-			br.com.example.model.avaliacao.model.AvaliacaoDetalhe entity) {
-
-		AvaliacaoDetalhe dto = new AvaliacaoDetalhe();  // Cria novo DTO
-
-		dto.setAvaliacaoDetalheId(entity.getAvaliacaoDetalheId()); // Mapeia ID do detalhe
-		dto.setAvaliacaoId(entity.getAvaliacaoId());               // Mapeia ID da avaliação pai
-		dto.setTipoAvaliador(entity.getTipoAvaliador());           // Mapeia tipo avaliador
-		dto.setNomeAvaliador(entity.getNomeAvaliador());           // Mapeia nome avaliador
-		dto.setObservacoesAvaliador(entity.getObservacoesAvaliador()); // Mapeia observações
-		dto.setDesempenho(entity.getDesempenho());                 // Mapeia nota desempenho
-
-		return dto;  // Retorna DTO preenchido
-	}
 
 	/**
 	 * Cria ServiceContext a partir do contexto HTTP da requisição REST.
