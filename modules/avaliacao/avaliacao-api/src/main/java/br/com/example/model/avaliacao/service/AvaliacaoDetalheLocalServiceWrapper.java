@@ -266,7 +266,6 @@ public class AvaliacaoDetalheLocalServiceWrapper
 
 	/**
 	 * Busca todos os detalhes de uma avaliação específica.
-	 * MÉTODO CRÍTICO - usado pela API REST.
 	 *
 	 * @param avaliacaoId ID da avaliação pai
 	 * @return lista de detalhes da avaliação

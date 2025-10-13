@@ -14,6 +14,8 @@ import br.com.example.model.avaliacao.service.base.AvaliacaoLocalServiceBaseImpl
 import com.liferay.portal.aop.AopService;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.search.Indexable;
+import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
 import org.osgi.service.component.annotations.Component;
@@ -85,7 +87,7 @@ public class AvaliacaoLocalServiceImpl extends AvaliacaoLocalServiceBaseImpl {
 	 * @return                  A avaliação criada
 	 * @throws PortalException  se os dados fornecidos forem inválidos
 	 */
-
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public Avaliacao addAvaliacao(
 			long funcionarioId,
@@ -132,7 +134,7 @@ public class AvaliacaoLocalServiceImpl extends AvaliacaoLocalServiceBaseImpl {
 	 * @return                  A avaliação atualizada
 	 * @throws PortalException  se os dados forem inválidos ou funcionário for alterado
 	 */
-
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public Avaliacao updateAvaliacao(
 			long avaliacaoId,
@@ -168,6 +170,7 @@ public class AvaliacaoLocalServiceImpl extends AvaliacaoLocalServiceBaseImpl {
 	 * @return                 A avaliação removida
 	 * @throws PortalException se a avaliação não for encontrada ou houver erro ao deletar
 	 */
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public Avaliacao deleteAvaliacao(long avaliacaoId) throws PortalException {
 

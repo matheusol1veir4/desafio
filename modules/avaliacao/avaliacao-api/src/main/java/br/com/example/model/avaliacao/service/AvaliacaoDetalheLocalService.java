@@ -68,6 +68,7 @@ public interface AvaliacaoDetalheLocalService
 	 * @return O detalhe de avaliação criado
 	 * @throws PortalException    se os dados fornecidos forem inválidos
 	 */
+	@Indexable(type = IndexableType.REINDEX)
 	public AvaliacaoDetalhe addAvaliacaoDetalhe(
 			Avaliacao avaliacao, int tipoAvaliador, String nomeAvaliador,
 			String observacoesAvaliador, int desempenho,
@@ -128,7 +129,7 @@ public interface AvaliacaoDetalheLocalService
 	 * @return the avaliacao detalhe that was removed
 	 * @throws PortalException if a avaliacao detalhe with the primary key could not be found
 	 */
-	@Indexable(type = IndexableType.DELETE)
+	@Indexable(type = IndexableType.REINDEX)
 	public AvaliacaoDetalhe deleteAvaliacaoDetalhe(long avaliacaoDetalheId)
 		throws PortalException;
 
@@ -216,7 +217,6 @@ public interface AvaliacaoDetalheLocalService
 
 	/**
 	 * Busca todos os detalhes de uma avaliação específica.
-	 * MÉTODO CRÍTICO - usado pela API REST.
 	 *
 	 * @param avaliacaoId ID da avaliação pai
 	 * @return lista de detalhes da avaliação
@@ -319,6 +319,7 @@ public interface AvaliacaoDetalheLocalService
 	 * @return O detalhe de avaliação atualizado
 	 * @throws PortalException     se os dados fornecidos forem inválidos
 	 */
+	@Indexable(type = IndexableType.REINDEX)
 	public AvaliacaoDetalhe updateAvaliacaoDetalhe(
 			long avaliacaoDetalheId, int tipoAvaliador, String nomeAvaliador,
 			String observacoesAvaliador, int desempenho,

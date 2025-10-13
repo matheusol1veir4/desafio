@@ -81,6 +81,7 @@ public interface AvaliacaoLocalService
 	 * @return A avaliação criada
 	 * @throws PortalException  se os dados fornecidos forem inválidos
 	 */
+	@Indexable(type = IndexableType.REINDEX)
 	public Avaliacao addAvaliacao(
 			long funcionarioId, Date dataAvaliacao, int periodoDesafio,
 			String observacoesGerais, int areaAtuacao,
@@ -126,7 +127,7 @@ public interface AvaliacaoLocalService
 	 * @return the avaliacao that was removed
 	 * @throws PortalException if a avaliacao with the primary key could not be found
 	 */
-	@Indexable(type = IndexableType.DELETE)
+	@Indexable(type = IndexableType.REINDEX)
 	public Avaliacao deleteAvaliacao(long avaliacaoId) throws PortalException;
 
 	/**
@@ -319,6 +320,7 @@ public interface AvaliacaoLocalService
 	 * @return A avaliação atualizada
 	 * @throws PortalException  se os dados forem inválidos ou funcionário for alterado
 	 */
+	@Indexable(type = IndexableType.REINDEX)
 	public Avaliacao updateAvaliacao(
 			long avaliacaoId, Date dataAvaliacao, int periodoDesafio,
 			String observacoesGerais, int areaAtuacao,

@@ -11,10 +11,15 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.vulcan.pagination.Page;
 
+import com.liferay.portal.vulcan.pagination.Pagination;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,6 +128,42 @@ public class AvaliacaoResourceImpl extends BaseAvaliacaoResourceImpl {
 		return ConverterDto.toAvaliacaoCompleta(avaliacaoEntity, detalhesEntities);
 	}
 
+	/**
+	 * Busca avaliações com filtros opcionais.
+	 * GET /o/desafio-avaliacao/v1.0/avaliacoes/search
+	 */
+	@GET
+	@Path("/search")
+	public Page<Avaliacao> searchAvaliacoes(
+			@QueryParam("nome") String nome,
+			@QueryParam("email") String email,
+			@QueryParam("data") String data,
+			@QueryParam("area") Integer area,
+			@QueryParam("periodo") Integer periodo,
+			@Context Pagination pagination
+	) throws Exception {
+
+		// Validações básicas
+		if (!_searchHelper.isValidDateFormat(data)) {
+			throw new IllegalArgumentException("Formato de data inválido. Use: yyyy-MM-dd");
+		}
+		if (!_searchHelper.isValidArea(area)) {
+			throw new IllegalArgumentException("Área inválida. Valores: 1-5");
+		}
+		if (!_searchHelper.isValidPeriodo(periodo)) {
+			throw new IllegalArgumentException("Período inválido. Valores: 1-3");
+		}
+
+		// Normalizar email
+		email = _searchHelper.normalizeEmail(email);
+
+		// Delegar para o service
+		return _searchService.searchAvaliacoes(
+				nome, email, data, area, periodo,
+				contextCompany.getCompanyId(),
+				pagination
+		);
+	}
 
 	/**
 	 * Cria uma nova avaliação de desafio para um funcionário.
@@ -250,5 +291,7 @@ public class AvaliacaoResourceImpl extends BaseAvaliacaoResourceImpl {
 
 	@Reference
 	private AvaliacaoDetalheLocalService _avaliacaoDetalheLocalService;
+
+
 
 }

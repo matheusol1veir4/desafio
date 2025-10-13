@@ -8,7 +8,7 @@ create table DESAFIO_Avaliacao (
 	funcionarioId LONG,
 	dataAvaliacao DATE null,
 	periodoDesafio INTEGER,
-	observacoesGerais VARCHAR(75) null,
+	observacoesGerais VARCHAR(500) null,
 	areaAtuacao INTEGER
 );
 

@@ -87,7 +87,7 @@ public class AvaliacaoModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table DESAFIO_Avaliacao (companyId LONG,groupId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,avaliacaoId LONG not null primary key,funcionarioId LONG,dataAvaliacao DATE null,periodoDesafio INTEGER,observacoesGerais VARCHAR(75) null,areaAtuacao INTEGER)";
+		"create table DESAFIO_Avaliacao (companyId LONG,groupId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,avaliacaoId LONG not null primary key,funcionarioId LONG,dataAvaliacao DATE null,periodoDesafio INTEGER,observacoesGerais VARCHAR(500) null,areaAtuacao INTEGER)";
 
 	public static final String TABLE_SQL_DROP = "drop table DESAFIO_Avaliacao";
 
