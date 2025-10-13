@@ -1,108 +1,216 @@
 package br.com.example.model.avaliacao.service.search;
 
-import br.com.example.model.avaliacao.indexer.Constants;
 import br.com.example.model.avaliacao.model.Avaliacao;
 import br.com.example.model.avaliacao.service.AvaliacaoLocalService;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.search.Document;
-import com.liferay.portal.kernel.search.Hits;
-import com.liferay.portal.kernel.search.Indexer;
-import com.liferay.portal.kernel.search.IndexerRegistryUtil;
-import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.vulcan.pagination.Page;
-import com.liferay.portal.vulcan.pagination.Pagination;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
-import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-/**
- * Service de busca para Avaliacao - Liferay 7.4 compatível.
- */
 @Component(service = AvaliacaoSearchService.class)
 public class AvaliacaoSearchService {
 
     private static final Log _log = LogFactoryUtil.getLog(AvaliacaoSearchService.class);
 
-    public Page<Avaliacao> searchAvaliacoes(
+    public SearchResult searchAvaliacoes(
             String nome,
             String email,
             String data,
             Integer area,
             Integer periodo,
             long companyId,
-            Pagination pagination
+            int start,
+            int end
     ) throws Exception {
 
-        SearchContext searchContext = _createSearchContext(
-                nome, email, data, area, periodo, companyId, pagination
-        );
+        _log.info("=== INÍCIO BUSCA AVALIAÇÕES ===");
+        _log.info("Parâmetros recebidos:");
+        _log.info("  - nome: " + nome);
+        _log.info("  - email: " + email);
+        _log.info("  - data: " + data);
+        _log.info("  - area: " + area);
+        _log.info("  - periodo: " + periodo);
+        _log.info("  - companyId: " + companyId);
+        _log.info("  - start: " + start + ", end: " + end);
 
-        Indexer<Avaliacao> indexer = IndexerRegistryUtil.nullSafeGetIndexer(Avaliacao.class);
-        Hits hits = indexer.search(searchContext);
+        // Busca TODAS as avaliações
+        List<Avaliacao> todasAvaliacoes = _avaliacaoLocalService.getAvaliacaos(0, Integer.MAX_VALUE);
+        _log.info("Total de avaliações no banco: " + todasAvaliacoes.size());
 
-        List<Avaliacao> results = _convertHitsToAvaliacoes(hits);
+        // Filtrar manualmente por companyId E critérios
+        List<Avaliacao> filtradas = new ArrayList<>();
+        int rejeitadasCompany = 0;
+        int rejeitadasCriterios = 0;
 
-        return Page.of(results, pagination, hits.getLength());
+        for (Avaliacao avaliacao : todasAvaliacoes) {
+            // Filtro por companyId
+            if (avaliacao.getCompanyId() != companyId) {
+                rejeitadasCompany++;
+                continue;
+            }
+
+            boolean match = _matchesCriteria(avaliacao, nome, email, data, area, periodo);
+
+            if (!match) {
+                rejeitadasCriterios++;
+                continue;
+            }
+
+            filtradas.add(avaliacao);
+            _log.info("Avaliação aceita: ID=" + avaliacao.getAvaliacaoId());
+        }
+
+        _log.info("Resultado da filtragem:");
+        _log.info("  - Rejeitadas por companyId: " + rejeitadasCompany);
+        _log.info("  - Rejeitadas por critérios: " + rejeitadasCriterios);
+        _log.info("  - Total filtradas: " + filtradas.size());
+
+        // Paginação
+        int total = filtradas.size();
+        int fromIndex = Math.max(0, Math.min(start, total));
+        int toIndex = Math.min(end, total);
+
+        if (toIndex < fromIndex) {
+            toIndex = fromIndex;
+        }
+
+        List<Avaliacao> paginadas = (fromIndex < total) ?
+                filtradas.subList(fromIndex, toIndex) :
+                new ArrayList<>();
+
+        _log.info("Paginação: retornando " + paginadas.size() + " de " + total);
+        _log.info("=== FIM BUSCA AVALIAÇÕES ===");
+
+        return new SearchResult(paginadas, total);
     }
 
-    private SearchContext _createSearchContext(
-            String nome, String email, String data,
-            Integer area, Integer periodo,
-            long companyId, Pagination pagination
+    private boolean _matchesCriteria(
+            Avaliacao avaliacao,
+            String nome,
+            String email,
+            String data,
+            Integer area,
+            Integer periodo
     ) {
-        SearchContext searchContext = new SearchContext();
-        searchContext.setCompanyId(companyId);
-        searchContext.setStart(pagination.getStartPosition());
-        searchContext.setEnd(pagination.getEndPosition());
+        long avaliacaoId = avaliacao.getAvaliacaoId();
 
-        Map<String, Serializable> attributes = new HashMap<>();
+        _log.info(">>> Analisando avaliação ID=" + avaliacaoId);
+        _log.info("    - areaAtuacao=" + avaliacao.getAreaAtuacao());
+        _log.info("    - periodoDesafio=" + avaliacao.getPeriodoDesafio());
+        _log.info("    - funcionarioId=" + avaliacao.getFuncionarioId());
 
-        if (Validator.isNotNull(nome)) {
-            attributes.put(Constants.NOME_FUNCIONARIO, nome.toLowerCase());
-        }
-        if (Validator.isNotNull(email)) {
-            attributes.put(Constants.EMAIL_FUNCIONARIO, email.toLowerCase());
-        }
-        if (Validator.isNotNull(data)) {
-            attributes.put(Constants.DATA_AVALIACAO, data);
-        }
+        // Filtro por área
         if (area != null) {
-            attributes.put(Constants.AREA_ATUACAO, area);
+            if (avaliacao.getAreaAtuacao() != area) {
+                _log.info(" Rejeitada por área. Esperado: " + area + ", Real: " + avaliacao.getAreaAtuacao());
+                return false;
+            }
+            _log.info(" Passou no filtro de área");
         }
+
+        // Filtro por período
         if (periodo != null) {
-            attributes.put(Constants.PERIODO_DESAFIO, periodo);
+            if (avaliacao.getPeriodoDesafio() != periodo) {
+                _log.info(" Rejeitada por período. Esperado: " + periodo + ", Real: " + avaliacao.getPeriodoDesafio());
+                return false;
+            }
+            _log.info(" Passou no filtro de período");
         }
 
-        searchContext.setAttributes(attributes);
-
-        return searchContext;
-    }
-
-    private List<Avaliacao> _convertHitsToAvaliacoes(Hits hits) {
-        List<Avaliacao> avaliacoes = new ArrayList<>();
-
-        for (Document document : hits.getDocs()) {
+        // Filtro por data
+        if (Validator.isNotNull(data)) {
             try {
-                long avaliacaoId = GetterUtil.getLong(document.get(Constants.AVALIACAO_ID));
-                Avaliacao avaliacao = _avaliacaoLocalService.getAvaliacao(avaliacaoId);
-                avaliacoes.add(avaliacao);
-            } catch (Exception e) {
-                _log.debug("Erro ao converter documento para Avaliacao", e);
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                Date dataFiltro = sdf.parse(data);
+                String dataAvaliacao = sdf.format(avaliacao.getDataAvaliacao());
+                String dataFiltroStr = sdf.format(dataFiltro);
+
+                if (!dataAvaliacao.equals(dataFiltroStr)) {
+                    _log.info(" Rejeitada por data. Esperado: " + dataFiltroStr + ", Real: " + dataAvaliacao);
+                    return false;
+                }
+                _log.info("  Passou no filtro de data");
+            } catch (ParseException e) {
+                _log.warn(" Erro ao parse data: " + data, e);
+                return false;
             }
         }
 
-        return avaliacoes;
+        // Filtro por nome ou email
+        if (Validator.isNotNull(nome) || Validator.isNotNull(email)) {
+            try {
+                User user = _userLocalService.getUser(avaliacao.getFuncionarioId());
+                _log.info("    User encontrado: " + user.getFullName() + " <" + user.getEmailAddress() + ">");
+
+                if (Validator.isNotNull(nome)) {
+                    String nomeCompleto = user.getFullName().toLowerCase();
+                    String nomeBusca = nome.toLowerCase();
+                    boolean match = nomeCompleto.contains(nomeBusca);
+
+                    _log.info("    Filtro nome: '" + nomeBusca + "' contains em '" + nomeCompleto + "' = " + match);
+
+                    if (!match) {
+                        _log.info(" Rejeitada por nome");
+                        return false;
+                    }
+                    _log.info(" Passou no filtro de nome");
+                }
+
+                if (Validator.isNotNull(email)) {
+                    String emailUser = user.getEmailAddress().toLowerCase();
+                    String emailBusca = email.toLowerCase();
+                    boolean match = emailUser.contains(emailBusca);
+
+                    _log.info("    Filtro email: '" + emailBusca + "' contains em '" + emailUser + "' = " + match);
+
+                    if (!match) {
+                        _log.info(" Rejeitada por email");
+                        return false;
+                    }
+                    _log.info(" Passou no filtro de email");
+                }
+
+            } catch (Exception e) {
+                _log.warn("   ERRO: User não encontrado para funcionarioId=" + avaliacao.getFuncionarioId(), e);
+                return false;
+            }
+        }
+
+        _log.info(" Avaliação ACEITA!");
+        return true;
+    }
+
+
+    public static class SearchResult {
+        private final List<Avaliacao> items;
+        private final int totalCount;
+
+        public SearchResult(List<Avaliacao> items, int totalCount) {
+            this.items = items;
+            this.totalCount = totalCount;
+        }
+
+        public List<Avaliacao> getItems() {
+            return items;
+        }
+
+        public int getTotalCount() {
+            return totalCount;
+        }
     }
 
     @Reference
     private AvaliacaoLocalService _avaliacaoLocalService;
 
+    @Reference
+    private UserLocalService _userLocalService;
 }

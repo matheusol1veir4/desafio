@@ -3,4 +3,9 @@ Bundle-SymbolicName: br.com.example.model.avaliacao.service
 Bundle-Version: 1.0.0
 Liferay-Require-SchemaVersion: 1.0.0
 Liferay-Service: true
+
+Export-Package: \
+	br.com.example.model.avaliacao.service.search,\
+	br.com.example.model.avaliacao.indexer
+
 -dsannotations-options: inherit

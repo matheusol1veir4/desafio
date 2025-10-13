@@ -6,6 +6,8 @@ import br.com.desafio.avaliacao.headless.internal.converter.ConverterDto;
 import br.com.desafio.avaliacao.headless.resource.v1_0.AvaliacaoResource;
 import br.com.example.model.avaliacao.service.AvaliacaoDetalheLocalService;
 import br.com.example.model.avaliacao.service.AvaliacaoLocalService;
+import br.com.example.model.avaliacao.service.search.AvaliacaoSearchHelper;
+import br.com.example.model.avaliacao.service.search.AvaliacaoSearchService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.PortalUtil;
@@ -18,6 +20,7 @@ import org.osgi.service.component.annotations.ServiceScope;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -130,10 +133,12 @@ public class AvaliacaoResourceImpl extends BaseAvaliacaoResourceImpl {
 
 	/**
 	 * Busca avaliações com filtros opcionais.
-	 * GET /o/desafio-avaliacao/v1.0/avaliacoes/search
+	 *
+	 * Endpoint: GET /o/desafio-avaliacao/v1.0/avaliacoes/search
 	 */
 	@GET
 	@Path("/search")
+	@Produces({"application/json", "application/xml"})
 	public Page<Avaliacao> searchAvaliacoes(
 			@QueryParam("nome") String nome,
 			@QueryParam("email") String email,
@@ -143,27 +148,41 @@ public class AvaliacaoResourceImpl extends BaseAvaliacaoResourceImpl {
 			@Context Pagination pagination
 	) throws Exception {
 
-		// Validações básicas
+		// Extrai companyId do contexto da requisição
+		long companyId = PortalUtil.getCompanyId(contextHttpServletRequest);
+
+		// Validações
 		if (!_searchHelper.isValidDateFormat(data)) {
 			throw new IllegalArgumentException("Formato de data inválido. Use: yyyy-MM-dd");
 		}
+
 		if (!_searchHelper.isValidArea(area)) {
-			throw new IllegalArgumentException("Área inválida. Valores: 1-5");
-		}
-		if (!_searchHelper.isValidPeriodo(periodo)) {
-			throw new IllegalArgumentException("Período inválido. Valores: 1-3");
+			throw new IllegalArgumentException("Área inválida. Valores permitidos: 1-5");
 		}
 
 		// Normalizar email
 		email = _searchHelper.normalizeEmail(email);
 
-		// Delegar para o service
-		return _searchService.searchAvaliacoes(
-				nome, email, data, area, periodo,
-				contextCompany.getCompanyId(),
-				pagination
+		// Executar busca
+		AvaliacaoSearchService.SearchResult searchResult = _searchService.searchAvaliacoes(
+				nome,
+				email,
+				data,
+				area,
+				periodo,
+				companyId,
+				pagination.getStartPosition(),
+				pagination.getEndPosition()
 		);
+
+		// Converter entidades para DTOs
+		List<br.com.example.model.avaliacao.model.Avaliacao> entities = searchResult.getItems();
+		List<Avaliacao> dtos = ConverterDto.entityListToDtoList(entities);
+
+		// Retornar página com DTOs
+		return Page.of(dtos, pagination, searchResult.getTotalCount());
 	}
+
 
 	/**
 	 * Cria uma nova avaliação de desafio para um funcionário.
@@ -292,6 +311,10 @@ public class AvaliacaoResourceImpl extends BaseAvaliacaoResourceImpl {
 	@Reference
 	private AvaliacaoDetalheLocalService _avaliacaoDetalheLocalService;
 
+	@Reference
+	private AvaliacaoSearchService _searchService;
 
+	@Reference
+	private AvaliacaoSearchHelper _searchHelper;
 
 }

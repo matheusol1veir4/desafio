@@ -37,7 +37,7 @@ public class AvaliacaoModelDocumentContributor implements ModelDocumentContribut
         document.addText(Constants.OBSERVACOES_GERAIS, avaliacao.getObservacoesGerais());
 
 // Indexar dados do funcionário
-        _contributeUserFields(document, avaliacao.getFuncionarioId());
+        contributeUserFields(document, avaliacao.getFuncionarioId());
 
 // Campos agregados dos detalhes
         List<AvaliacaoDetalhe> detalhes = _avaliacaoDetalheLocalService.findByAvaliacaoId(avaliacao.getAvaliacaoId());
@@ -63,11 +63,13 @@ public class AvaliacaoModelDocumentContributor implements ModelDocumentContribut
     }
 
     // Método para indexar dados do User
-    private void _contributeUserFields(Document document, long funcionarioId) {
+    private void contributeUserFields(Document document, long funcionarioId) {
         try {
             User user = _userLocalService.getUser(funcionarioId);
+
             document.addText(Constants.NOME_FUNCIONARIO, user.getFullName());
-            document.addKeyword(Constants.EMAIL_FUNCIONARIO, user.getEmailAddress());
+            document.addText(Constants.EMAIL_FUNCIONARIO, user.getEmailAddress());  // ← AQUI!
+
         } catch (PortalException e) {
             if (_log.isDebugEnabled()) {
                 _log.debug("User não encontrado para funcionarioId: " + funcionarioId, e);

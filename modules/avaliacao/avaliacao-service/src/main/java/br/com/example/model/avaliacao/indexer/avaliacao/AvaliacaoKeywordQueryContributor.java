@@ -32,7 +32,7 @@ public class AvaliacaoKeywordQueryContributor implements KeywordQueryContributor
         queryHelper.addSearchTerm(booleanQuery, searchContext, Constants.TIPOS_AVALIADORES, false);
         queryHelper.addSearchTerm(booleanQuery, searchContext, Constants.DESEMPENHOS, false);
         queryHelper.addSearchTerm(booleanQuery, searchContext, Constants.NOME_FUNCIONARIO, true);
-        queryHelper.addSearchTerm(booleanQuery, searchContext, Constants.EMAIL_FUNCIONARIO, false);
+        queryHelper.addSearchTerm(booleanQuery, searchContext, Constants.EMAIL_FUNCIONARIO, true);
     }
 
     @Reference
