@@ -2,6 +2,7 @@ dependencies {
 	api project(":modules:avaliacao:avaliacao-api")
 
 	compileOnly group: "com.liferay.portal", name: "release.portal.api"
+	compileOnly group: 'javax.mail', name: 'mail', version: '1.4'
 }
 
 buildService {

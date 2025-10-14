@@ -76,6 +76,32 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {searchAvaliacoes(area: ___, data: ___, email: ___, nome: ___, page: ___, pageSize: ___, periodo: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(
+		description = "Busca avaliações aplicando múltiplos filtros (nome, email, data, área, período)"
+	)
+	public AvaliacaoPage searchAvaliacoes(
+			@GraphQLName("nome") String nome,
+			@GraphQLName("email") String email,
+			@GraphQLName("data") String data, @GraphQLName("area") Integer area,
+			@GraphQLName("periodo") Integer periodo,
+			@GraphQLName("pageSize") int pageSize,
+			@GraphQLName("page") int page)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_avaliacaoResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			avaliacaoResource -> new AvaliacaoPage(
+				avaliacaoResource.searchAvaliacoes(
+					nome, email, data, area, periodo,
+					Pagination.of(page, pageSize))));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
 	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {avaliacaoById(avaliacaoId: ___){avaliacaoId, funcionarioId, dataAvaliacao, periodoDesafio, observacoesGerais, areaAtuacao}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField(description = "Busca uma avaliação específica por ID")

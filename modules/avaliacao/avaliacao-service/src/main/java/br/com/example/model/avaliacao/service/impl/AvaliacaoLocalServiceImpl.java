@@ -11,16 +11,29 @@ import br.com.example.model.avaliacao.model.Avaliacao;
 import br.com.example.model.avaliacao.model.AvaliacaoDetalhe;
 import br.com.example.model.avaliacao.service.base.AvaliacaoLocalServiceBaseImpl;
 
+import com.liferay.mail.kernel.model.MailMessage;
+import com.liferay.mail.kernel.service.MailServiceUtil;
 import com.liferay.portal.aop.AopService;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
 import org.osgi.service.component.annotations.Component;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.InternetHeaders;
 import javax.ws.rs.NotFoundException;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -118,7 +131,67 @@ public class AvaliacaoLocalServiceImpl extends AvaliacaoLocalServiceBaseImpl {
 
 		avaliacao = super.addAvaliacao(avaliacao);
 
+		String emailFrom = "marcdesafio@gmail.com";
+		String emailTo = "matheus.oliveira@desafio.com";
+		String subject = "teste";
+		String emailTitle = "testando";
+		String html = "anexo";
+		MailMessage mailMessage = prepareMailMessage(html, emailFrom, emailTo, subject, emailTitle, null);
+
+		MailServiceUtil.sendEmail(mailMessage);
+
 		return avaliacao;
+	}
+
+	private MailMessage prepareMailMessage(String html, String emailFrom, String emailTo, String subject, String emailTitle, File file) {
+		try {
+			InternetAddress fromAddress = new InternetAddress(emailFrom, emailTitle);
+			InternetAddress toAddress = new InternetAddress(emailTo);
+			MailMessage mailMessage = new MailMessage();
+
+			mailMessage.setHTMLFormat(true);
+			mailMessage.setFrom(fromAddress);
+			mailMessage.setTo(toAddress);
+			mailMessage.setSubject(subject);
+			mailMessage.setBody(html);
+			setHeaderCustomized(emailFrom, mailMessage);
+
+			if(file != null) {
+				mailMessage.addFileAttachment(file);
+			}
+
+			return mailMessage;
+		} catch (AddressException | UnsupportedEncodingException e) {
+			_log.error(e.getMessage());
+			throw new RuntimeException(e.getMessage());
+		}
+	}
+
+	private void setHeaderCustomized(String emailDefault, MailMessage mailMessage) {
+		InternetHeaders headers = new InternetHeaders();
+		headers.setHeader("Message-ID", generateMessageId(emailDefault));
+		headers.setHeader("Date", new Date().toString());
+		headers.setHeader("X-Mailer", "Liferay 7.4 - SESC-DF Credenciamento");
+		headers.setHeader("X-Priority", "1");
+		headers.setHeader("Importance", "high");
+		headers.setHeader("X-MSMail-Priority", "High");
+		mailMessage.setInternetHeaders(headers);
+	}
+
+	private String generateMessageId(String fromAddress) {
+		try {
+			long now = Instant.now().getEpochSecond();
+			MessageDigest digest = MessageDigest.getInstance("SHA-256");
+			byte[] hash = digest.digest(Long.toString(now).getBytes(StandardCharsets.UTF_8));
+			StringBuilder hexString = new StringBuilder();
+			for (byte b : hash) {
+				hexString.append(String.format("%02x", b));
+			}
+			String[] domain = fromAddress.split("@");
+			return "<" + hexString.toString() + "@" + domain[1] + ">";
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException("Error generating Message-ID", e);
+		}
 	}
 
 	/**
@@ -241,6 +314,6 @@ public class AvaliacaoLocalServiceImpl extends AvaliacaoLocalServiceBaseImpl {
 
 	}
 
-
+	private final Log _log = LogFactoryUtil.getLog(AvaliacaoLocalServiceImpl.class);
 
 }

@@ -49,6 +49,11 @@ public interface AvaliacaoResource {
 
 	public Avaliacao createAvaliacao(Avaliacao avaliacao) throws Exception;
 
+	public Page<Avaliacao> searchAvaliacoes(
+			String nome, String email, String data, Integer area,
+			Integer periodo, Pagination pagination)
+		throws Exception;
+
 	public Response deleteAvaliacao(Long avaliacaoId) throws Exception;
 
 	public Response deleteAvaliacaoBatch(String callbackURL, Object object)

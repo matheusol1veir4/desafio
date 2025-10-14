@@ -24,7 +24,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -136,19 +138,16 @@ public class AvaliacaoResourceImpl extends BaseAvaliacaoResourceImpl {
 	 *
 	 * Endpoint: GET /o/desafio-avaliacao/v1.0/avaliacoes/search
 	 */
-	@GET
-	@Path("/search")
-	@Produces({"application/json", "application/xml"})
+	@Override
 	public Page<Avaliacao> searchAvaliacoes(
-			@QueryParam("nome") String nome,
-			@QueryParam("email") String email,
-			@QueryParam("data") String data,
-			@QueryParam("area") Integer area,
-			@QueryParam("periodo") Integer periodo,
-			@Context Pagination pagination
+			String nome,
+			String email,
+			String data,
+			Integer area,
+			Integer periodo,
+			Pagination pagination
 	) throws Exception {
 
-		// Extrai companyId do contexto da requisição
 		long companyId = PortalUtil.getCompanyId(contextHttpServletRequest);
 
 		// Validações
@@ -158,6 +157,10 @@ public class AvaliacaoResourceImpl extends BaseAvaliacaoResourceImpl {
 
 		if (!_searchHelper.isValidArea(area)) {
 			throw new IllegalArgumentException("Área inválida. Valores permitidos: 1-5");
+		}
+
+		if (!_searchHelper.isValidPeriodo(periodo)) {
+			throw new IllegalArgumentException("Período inválido. Valores permitidos: 1-3");
 		}
 
 		// Normalizar email
@@ -182,6 +185,7 @@ public class AvaliacaoResourceImpl extends BaseAvaliacaoResourceImpl {
 		// Retornar página com DTOs
 		return Page.of(dtos, pagination, searchResult.getTotalCount());
 	}
+
 
 
 	/**

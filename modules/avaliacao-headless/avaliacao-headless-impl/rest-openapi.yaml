@@ -10,7 +10,6 @@ openapi: 3.0.1
 # ============================================================
 # SCHEMAS (DTOs) - Estruturas de dados
 # ============================================================
-
 components:
   schemas:
     # ==========================================
@@ -116,9 +115,7 @@ components:
 # ============================================================
 # PATHS (ENDPOINTS)
 # ============================================================
-
 paths:
-
   # ==========================================
   # GRUPO 1: CRUD de Avaliação
   # ==========================================
@@ -178,6 +175,76 @@ paths:
             application/xml:
               schema:
                 $ref: "#/components/schemas/Avaliacao"
+
+  # GET /o/avaliacao-rest/v1.0/avaliacoes/search
+  "/avaliacoes/search":
+    get:
+      operationId: searchAvaliacoes
+      tags: ["Avaliacao"]
+      description: "Busca avaliações aplicando múltiplos filtros (nome, email, data, área, período)"
+      parameters:
+        - in: query
+          name: nome
+          description: "Nome do funcionário para busca parcial (case-insensitive)"
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: email
+          description: "Email do funcionário para busca parcial (case-insensitive)"
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: data
+          description: "Data da avaliação no formato yyyy-MM-dd"
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: area
+          description: "Código da área de atuação: 1=Analista, 2=Tester, 3=UI, 4=Frontend, 5=Backend"
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 5
+        - in: query
+          name: periodo
+          description: "Código do período de desafio: 1=30 dias, 2=60 dias, 3=90 dias"
+          required: false
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 3
+        - in: query
+          name: page
+          description: "Número da página (paginação)"
+          schema:
+            type: integer
+        - in: query
+          name: pageSize
+          description: "Quantidade de itens por página"
+          schema:
+            type: integer
+      responses:
+        200:
+          description: "Busca realizada com sucesso"
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Avaliacao"
+                type: array
+            application/xml:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Avaliacao"
+                type: array
+        400:
+          description: "Parâmetros inválidos (formato de data, área ou período incorretos)"
 
   # GET /o/avaliacao-rest/v1.0/avaliacoes/{avaliacaoId}
   # PUT /o/avaliacao-rest/v1.0/avaliacoes/{avaliacaoId}
