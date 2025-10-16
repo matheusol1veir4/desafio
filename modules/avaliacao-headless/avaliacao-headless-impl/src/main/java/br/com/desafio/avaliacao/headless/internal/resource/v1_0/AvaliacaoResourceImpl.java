@@ -2,6 +2,7 @@ package br.com.desafio.avaliacao.headless.internal.resource.v1_0;
 
 import br.com.desafio.avaliacao.headless.dto.v1_0.Avaliacao;
 import br.com.desafio.avaliacao.headless.dto.v1_0.AvaliacaoCompleta;
+import br.com.desafio.avaliacao.headless.dto.v1_0.AvaliacaoDetalhe;
 import br.com.desafio.avaliacao.headless.internal.converter.ConverterDto;
 import br.com.desafio.avaliacao.headless.resource.v1_0.AvaliacaoResource;
 import br.com.example.model.avaliacao.service.AvaliacaoDetalheLocalService;
@@ -211,6 +212,62 @@ public class AvaliacaoResourceImpl extends BaseAvaliacaoResourceImpl {
 
 		return ConverterDto.entityToDto(entity);  // Converte entity salva para DTO
 	}
+
+	/**
+	 * Cria uma avaliação completa (avaliação + todos os detalhes) em uma única requisição.
+	 *
+	 * Endpoint: POST /o/desafio-avaliacao/v1.0/avaliacoes/completa
+	 *
+	 * @param avaliacaoCompleta DTO com avaliação + array de detalhes (TechLead, Gerente, RH)
+	 * @return AvaliacaoCompleta DTO com IDs gerados
+	 * @throws PortalException se dados inválidos ou erro ao salvar
+	 */
+	@Override
+	public AvaliacaoCompleta createAvaliacaoCompleta(AvaliacaoCompleta avaliacaoCompleta)
+			throws PortalException {
+
+		ServiceContext serviceContext = createServiceContext();
+
+		// 1. Cria a AVALIAÇÃO principal
+		br.com.example.model.avaliacao.model.Avaliacao avaliacaoEntity =
+				_avaliacaoLocalService.addAvaliacao(
+						avaliacaoCompleta.getFuncionarioId(),
+						avaliacaoCompleta.getDataAvaliacao(),
+						avaliacaoCompleta.getPeriodoDesafio(),
+						avaliacaoCompleta.getObservacoesGerais(),
+						avaliacaoCompleta.getAreaAtuacao(),
+						serviceContext
+				);
+
+		// 2. Obtem o avaliacaoId gerado
+		long avaliacaoId = avaliacaoEntity.getAvaliacaoId();
+
+		// 3. Cria TODOS os DETALHES (TechLead, Gerente, RH)
+		List<br.com.example.model.avaliacao.model.AvaliacaoDetalhe> detalhesEntities =
+				new ArrayList<>();
+
+		AvaliacaoDetalhe[] detalhesDTO = avaliacaoCompleta.getAvaliacaoDetalhes();
+
+		if (detalhesDTO != null && detalhesDTO.length > 0) {
+			for (AvaliacaoDetalhe detalheDTO : detalhesDTO) {
+				br.com.example.model.avaliacao.model.AvaliacaoDetalhe detalheEntity =
+						_avaliacaoDetalheLocalService.addAvaliacaoDetalhe(
+								avaliacaoEntity,
+								detalheDTO.getTipoAvaliador(),
+								detalheDTO.getNomeAvaliador(),
+								detalheDTO.getObservacoesAvaliador(),
+								detalheDTO.getDesempenho(),
+								serviceContext
+						);
+
+				detalhesEntities.add(detalheEntity);
+			}
+		}
+
+		// 4. Converte tudo de volta para DTO composto
+		return ConverterDto.toAvaliacaoCompleta(avaliacaoEntity, detalhesEntities);
+	}
+
 
 	/**
 	 * Atualiza uma avaliação existente.
