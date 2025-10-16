@@ -215,7 +215,6 @@ public class AvaliacaoResourceImpl extends BaseAvaliacaoResourceImpl {
 
 	/**
 	 * Cria uma avaliação completa (avaliação + todos os detalhes) em uma única requisição.
-	 *
 	 * Endpoint: POST /o/desafio-avaliacao/v1.0/avaliacoes/completa
 	 *
 	 * @param avaliacaoCompleta DTO com avaliação + array de detalhes (TechLead, Gerente, RH)

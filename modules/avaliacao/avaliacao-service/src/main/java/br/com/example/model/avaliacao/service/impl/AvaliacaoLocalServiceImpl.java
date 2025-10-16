@@ -9,6 +9,7 @@ import br.com.example.model.avaliacao.enums.AreaAtuacaoEnum;
 import br.com.example.model.avaliacao.enums.PeriodoDesafioEnum;
 import br.com.example.model.avaliacao.model.Avaliacao;
 import br.com.example.model.avaliacao.model.AvaliacaoDetalhe;
+import br.com.example.model.avaliacao.notification.EmailNotificationUtil;
 import br.com.example.model.avaliacao.service.base.AvaliacaoLocalServiceBaseImpl;
 
 import com.liferay.mail.kernel.model.MailMessage;
@@ -131,68 +132,19 @@ public class AvaliacaoLocalServiceImpl extends AvaliacaoLocalServiceBaseImpl {
 
 		avaliacao = super.addAvaliacao(avaliacao);
 
-		String emailFrom = "marcdesafio@gmail.com";
-		String emailTo = "matheus.oliveira@desafio.com";
-		String subject = "teste";
-		String emailTitle = "testando";
-		String html = "anexo";
-		MailMessage mailMessage = prepareMailMessage(html, emailFrom, emailTo, subject, emailTitle, null);
-
-		MailServiceUtil.sendEmail(mailMessage);
+		//  ENVIA EMAIL
+		try {
+			EmailNotificationUtil.enviarEmailAvaliacaoCriada(avaliacao);
+			_log.info(" Email de notificação enviado com sucesso");
+		} catch (Exception e) {
+			_log.warn(" Falha ao enviar email (avaliação foi salva com sucesso): " + e.getMessage());
+			// Não falha a operação se email der erro
+		}
 
 		return avaliacao;
 	}
 
-	private MailMessage prepareMailMessage(String html, String emailFrom, String emailTo, String subject, String emailTitle, File file) {
-		try {
-			InternetAddress fromAddress = new InternetAddress(emailFrom, emailTitle);
-			InternetAddress toAddress = new InternetAddress(emailTo);
-			MailMessage mailMessage = new MailMessage();
 
-			mailMessage.setHTMLFormat(true);
-			mailMessage.setFrom(fromAddress);
-			mailMessage.setTo(toAddress);
-			mailMessage.setSubject(subject);
-			mailMessage.setBody(html);
-			setHeaderCustomized(emailFrom, mailMessage);
-
-			if(file != null) {
-				mailMessage.addFileAttachment(file);
-			}
-
-			return mailMessage;
-		} catch (AddressException | UnsupportedEncodingException e) {
-			_log.error(e.getMessage());
-			throw new RuntimeException(e.getMessage());
-		}
-	}
-
-	private void setHeaderCustomized(String emailDefault, MailMessage mailMessage) {
-		InternetHeaders headers = new InternetHeaders();
-		headers.setHeader("Message-ID", generateMessageId(emailDefault));
-		headers.setHeader("Date", new Date().toString());
-		headers.setHeader("X-Mailer", "Liferay 7.4 - SESC-DF Credenciamento");
-		headers.setHeader("X-Priority", "1");
-		headers.setHeader("Importance", "high");
-		headers.setHeader("X-MSMail-Priority", "High");
-		mailMessage.setInternetHeaders(headers);
-	}
-
-	private String generateMessageId(String fromAddress) {
-		try {
-			long now = Instant.now().getEpochSecond();
-			MessageDigest digest = MessageDigest.getInstance("SHA-256");
-			byte[] hash = digest.digest(Long.toString(now).getBytes(StandardCharsets.UTF_8));
-			StringBuilder hexString = new StringBuilder();
-			for (byte b : hash) {
-				hexString.append(String.format("%02x", b));
-			}
-			String[] domain = fromAddress.split("@");
-			return "<" + hexString.toString() + "@" + domain[1] + ">";
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException("Error generating Message-ID", e);
-		}
-	}
 
 	/**
 	 * Atualiza uma avaliação existente.

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação de Desafio</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9;">
+
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f6f9; padding: 40px 20px;">
+    <tr>
+        <td align="center">
+
+            <!-- Card Principal -->
+            <table width="600" cellpadding="0" cellspacing="0" style="background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden;">
+
+                <!-- Header com Gradiente Roxo -->
+                <tr>
+                    <td style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
+                        <h1 style="margin: 0; color: white; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;">
+                            🎯 Avaliação de Desafio
+                        </h1>
+                        <p style="margin: 10px 0 0 0; color: rgba(255,255,255,0.9); font-size: 16px;">
+                            SEA TECNOLOGIA
+                        </p>
+                    </td>
+                </tr>
+
+                <!-- Conteúdo Principal -->
+                <tr>
+                    <td style="padding: 40px 30px;">
+
+                        <!-- Saudação -->
+                        <p style="margin: 0 0 20px 0; font-size: 16px; color: #2d3748; line-height: 1.6;">
+                            Olá <strong>{{nomeFuncionario}}</strong>,
+                        </p>
+
+                        <p style="margin: 0 0 30px 0; font-size: 16px; color: #2d3748; line-height: 1.6;">
+                            Uma nova avaliação de <strong>{{periodoDesafio}} dias</strong> foi criada para você.
+                        </p>
+
+                        <!-- Card de Informações -->
+                        <div style="background: #f8f9fa; border-left: 4px solid #667eea; padding: 20px; border-radius: 8px; margin: 30px 0;">
+                            <h3 style="margin: 0 0 15px 0; color: #667eea; font-size: 18px; font-weight: 600;">
+                                📋 Informações da Avaliação
+                            </h3>
+                            <table width="100%" cellpadding="8" cellspacing="0">
+                                <tr>
+                                    <td style="color: #718096; font-size: 14px; font-weight: 600; width: 40%;">
+                                        Período:
+                                    </td>
+                                    <td style="color: #2d3748; font-size: 14px; text-align: right;">
+                                        {{periodoDesafio}} dias
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #718096; font-size: 14px; font-weight: 600;">
+                                        Data:
+                                    </td>
+                                    <td style="color: #2d3748; font-size: 14px; text-align: right;">
+                                        {{dataAvaliacao}}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- Call to Action -->
+                        <p style="margin: 30px 0 20px 0; font-size: 16px; color: #2d3748; line-height: 1.6;">
+                            Acesse o sistema para visualizar mais detalhes e acompanhar o progresso da sua avaliação.
+                        </p>
+
+                    </td>
+                </tr>
+
+                <!-- Footer -->
+                <tr>
+                    <td style="background: #f8f9fa; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+                        <p style="margin: 0 0 10px 0; color: #718096; font-size: 14px; font-weight: 600;">
+                            SEA TECNOLOGIA
+                        </p>
+                        <p style="margin: 0; color: #a0aec0; font-size: 12px;">
+                            © {{anoAtual}} SEA TECNOLOGIA - Todos os direitos reservados
+                        </p>
+                        <p style="margin: 10px 0 0 0; color: #a0aec0; font-size: 12px;">
+                            Este é um email automático. Por favor, não responda.
+                        </p>
+                    </td>
+                </tr>
+
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
