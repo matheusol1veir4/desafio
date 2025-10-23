@@ -7,6 +7,7 @@ package br.com.example.model.avaliacao.model;
 
 import com.liferay.portal.kernel.bean.AutoEscape;
 import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.model.ShardedModel;
 
 import java.util.Date;
@@ -25,7 +26,8 @@ import org.osgi.annotation.versioning.ProviderType;
  * @generated
  */
 @ProviderType
-public interface AvaliacaoModel extends BaseModel<Avaliacao>, ShardedModel {
+public interface AvaliacaoModel
+	extends BaseModel<Avaliacao>, GroupedModel, ShardedModel {
 
 	/*
 	 * NOTE FOR DEVELOPERS:
@@ -68,6 +70,7 @@ public interface AvaliacaoModel extends BaseModel<Avaliacao>, ShardedModel {
 	 *
 	 * @return the group ID of this avaliacao
 	 */
+	@Override
 	public long getGroupId();
 
 	/**
@@ -75,6 +78,7 @@ public interface AvaliacaoModel extends BaseModel<Avaliacao>, ShardedModel {
 	 *
 	 * @param groupId the group ID of this avaliacao
 	 */
+	@Override
 	public void setGroupId(long groupId);
 
 	/**
@@ -82,6 +86,7 @@ public interface AvaliacaoModel extends BaseModel<Avaliacao>, ShardedModel {
 	 *
 	 * @return the user ID of this avaliacao
 	 */
+	@Override
 	public long getUserId();
 
 	/**
@@ -89,6 +94,7 @@ public interface AvaliacaoModel extends BaseModel<Avaliacao>, ShardedModel {
 	 *
 	 * @param userId the user ID of this avaliacao
 	 */
+	@Override
 	public void setUserId(long userId);
 
 	/**
@@ -96,6 +102,7 @@ public interface AvaliacaoModel extends BaseModel<Avaliacao>, ShardedModel {
 	 *
 	 * @return the user uuid of this avaliacao
 	 */
+	@Override
 	public String getUserUuid();
 
 	/**
@@ -103,13 +110,32 @@ public interface AvaliacaoModel extends BaseModel<Avaliacao>, ShardedModel {
 	 *
 	 * @param userUuid the user uuid of this avaliacao
 	 */
+	@Override
 	public void setUserUuid(String userUuid);
+
+	/**
+	 * Returns the user name of this avaliacao.
+	 *
+	 * @return the user name of this avaliacao
+	 */
+	@AutoEscape
+	@Override
+	public String getUserName();
+
+	/**
+	 * Sets the user name of this avaliacao.
+	 *
+	 * @param userName the user name of this avaliacao
+	 */
+	@Override
+	public void setUserName(String userName);
 
 	/**
 	 * Returns the create date of this avaliacao.
 	 *
 	 * @return the create date of this avaliacao
 	 */
+	@Override
 	public Date getCreateDate();
 
 	/**
@@ -117,6 +143,7 @@ public interface AvaliacaoModel extends BaseModel<Avaliacao>, ShardedModel {
 	 *
 	 * @param createDate the create date of this avaliacao
 	 */
+	@Override
 	public void setCreateDate(Date createDate);
 
 	/**
@@ -124,6 +151,7 @@ public interface AvaliacaoModel extends BaseModel<Avaliacao>, ShardedModel {
 	 *
 	 * @return the modified date of this avaliacao
 	 */
+	@Override
 	public Date getModifiedDate();
 
 	/**
@@ -131,6 +159,7 @@ public interface AvaliacaoModel extends BaseModel<Avaliacao>, ShardedModel {
 	 *
 	 * @param modifiedDate the modified date of this avaliacao
 	 */
+	@Override
 	public void setModifiedDate(Date modifiedDate);
 
 	/**

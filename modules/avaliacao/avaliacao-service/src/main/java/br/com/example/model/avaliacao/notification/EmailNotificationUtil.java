@@ -1,6 +1,8 @@
 package br.com.example.model.avaliacao.notification;
 
 import br.com.example.model.avaliacao.model.Avaliacao;
+import br.com.example.model.avaliacao.model.AvaliacaoDetalhe;
+import br.com.example.model.avaliacao.service.AvaliacaoDetalheLocalServiceUtil;
 import com.liferay.mail.kernel.model.MailMessage;
 import com.liferay.mail.kernel.service.MailServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -13,6 +15,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import javax.mail.internet.InternetAddress;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 /**
  * Utilitário para envio de notificações por email de avaliações.
@@ -81,5 +84,271 @@ public class EmailNotificationUtil {
                 .replace("{{anoAtual}}", yearFormat.format(new java.util.Date()));
     }
 
+    /**
+     * Envia notificação para RH quando um avaliador preenche sua parte.
+     *
+     * Este método verifica o status de preenchimento e envia:
+     * - Email de "preenchimento parcial" se ainda falta alguém preencher
+     * - Email de "avaliação completa" se todos os 3 já preencheram
+     *
+     * @param avaliacao Avaliação sendo preenchida
+     * @param tipoAvaliadorQuePreencheu Tipo do avaliador (1=TechLead, 2=Gerente, 3=RH)
+     * @param usuariosRH Lista de usuários com role RH para notificar
+     */
+    public static void enviarNotificacaoPreenchimento(
+            Avaliacao avaliacao,
+            int tipoAvaliadorQuePreencheu,
+            List<User> usuariosRH) {
+
+        try {
+            // Verificar status atual de preenchimento
+            StatusPreenchimento status = verificarStatusPreenchimento(avaliacao);
+
+            if (status.isCompleta()) {
+                // Todos os 3 avaliadores preencheram - email especial
+                enviarEmailAvaliacaoCompleta(avaliacao, usuariosRH);
+            } else {
+                // Apenas alguns preencheram - email de status parcial
+                enviarEmailPreenchimentoParcial(
+                        avaliacao,
+                        tipoAvaliadorQuePreencheu,
+                        status,
+                        usuariosRH
+                );
+            }
+
+        } catch (Exception e) {
+            // NÃO FALHAR a operação principal se notificação der erro
+            _log.error("Erro ao enviar notificação de preenchimento para avaliação " +
+                    avaliacao.getAvaliacaoId(), e);
+        }
+    }
+
+    /**
+     * Envia email de avaliação completa usando template HTML.
+     */
+    private static void enviarEmailAvaliacaoCompleta(
+            Avaliacao avaliacao,
+            List<User> usuariosRH) throws Exception {
+
+        User funcionario = UserLocalServiceUtil.getUser(avaliacao.getFuncionarioId());
+
+        // Carregar template
+        String htmlTemplate = carregarTemplate("email-avaliacao-completa.html");
+
+        // Substituir placeholders
+        String htmlContent = htmlTemplate
+                .replace("{{FUNCIONARIO_NOME}}", funcionario.getFullName())
+                .replace("{{FUNCIONARIO_EMAIL}}", funcionario.getEmailAddress())
+                .replace("{{PERIODO_DESAFIO}}", String.valueOf(avaliacao.getPeriodoDesafio()))
+                .replace("{{DATA_AVALIACAO}}", DATE_FORMAT.format(avaliacao.getDataAvaliacao()));
+
+        String assunto = "✅ Avaliação Completa - " + funcionario.getFullName();
+
+        enviarEmailParaGrupo(usuariosRH, assunto, htmlContent);
+
+        _log.info("Email de avaliação completa enviado para " + usuariosRH.size() +
+                " usuários RH (Avaliação ID: " + avaliacao.getAvaliacaoId() + ")");
+    }
+
+    /**
+     * Envia email de preenchimento parcial usando template HTML.
+     */
+    private static void enviarEmailPreenchimentoParcial(
+            Avaliacao avaliacao,
+            int tipoAvaliadorQuePreencheu,
+            StatusPreenchimento status,
+            List<User> usuariosRH) throws Exception {
+
+        User funcionario = UserLocalServiceUtil.getUser(avaliacao.getFuncionarioId());
+        String nomeAvaliador = getNomeTipoAvaliador(tipoAvaliadorQuePreencheu);
+
+        // Carregar template
+        String htmlTemplate = carregarTemplate("email-preenchimento-parcial.html");
+
+        // Substituir placeholders básicos
+        String htmlContent = htmlTemplate
+                .replace("{{NOME_AVALIADOR}}", nomeAvaliador)
+                .replace("{{FUNCIONARIO_NOME}}", funcionario.getFullName());
+
+        // Substituir status de Tech Lead
+        htmlContent = htmlContent
+                .replace("{{STATUS_TECH_LEAD_ICON}}", status.techLeadPreenchido ? "✅" : "⏳")
+                .replace("{{STATUS_TECH_LEAD_TEXTO}}", status.techLeadPreenchido ? "Preenchido" : "Aguardando")
+                .replace("{{STATUS_TECH_LEAD_BG}}", status.techLeadPreenchido ? "#ecfdf5" : "#fef3c7");
+
+        // Substituir status de Gerente
+        htmlContent = htmlContent
+                .replace("{{STATUS_GERENTE_ICON}}", status.gerentePreenchido ? "✅" : "⏳")
+                .replace("{{STATUS_GERENTE_TEXTO}}", status.gerentePreenchido ? "Preenchido" : "Aguardando")
+                .replace("{{STATUS_GERENTE_BG}}", status.gerentePreenchido ? "#ecfdf5" : "#fef3c7");
+
+        // Substituir status de RH
+        htmlContent = htmlContent
+                .replace("{{STATUS_RH_ICON}}", status.rhPreenchido ? "✅" : "⏳")
+                .replace("{{STATUS_RH_TEXTO}}", status.rhPreenchido ? "Preenchido" : "Aguardando")
+                .replace("{{STATUS_RH_BG}}", status.rhPreenchido ? "#ecfdf5" : "#fef3c7");
+
+        // Alerta de pendência (se não completo)
+        String alertaPendencia = "";
+        if (!status.isCompleta()) {
+            alertaPendencia =
+                    "<div style=\"background-color: #fef3c7; border-left: 4px solid #f59e0b; " +
+                            "padding: 15px; border-radius: 4px; margin-bottom: 25px;\">" +
+                            "<p style=\"margin: 0; font-size: 14px; color: #92400e; font-weight: bold;\">" +
+                            "⚠️ Aguardando preenchimento dos demais avaliadores." +
+                            "</p></div>";
+        }
+        htmlContent = htmlContent.replace("{{ALERTA_PENDENCIA}}", alertaPendencia);
+
+        String assunto = "📝 " + nomeAvaliador + " preencheu avaliação - " +
+                funcionario.getFullName();
+
+        enviarEmailParaGrupo(usuariosRH, assunto, htmlContent);
+
+        _log.info("Email de preenchimento parcial enviado (" + nomeAvaliador +
+                ") - Avaliação ID: " + avaliacao.getAvaliacaoId());
+    }
+
+    /**
+     * Carrega template HTML da pasta resources.
+     *
+     * @param nomeArquivo Nome do arquivo (ex: "email-avaliacao-completa.html")
+     * @return Conteúdo HTML do template
+     */
+    private static String carregarTemplate(String nomeArquivo) throws Exception {
+        try (InputStream inputStream = EmailNotificationUtil.class.getClassLoader()
+                .getResourceAsStream(nomeArquivo)) {
+
+            if (inputStream == null) {
+                throw new Exception("Template não encontrado em resources: " + nomeArquivo);
+            }
+
+            return StringUtil.read(inputStream);
+
+        } catch (Exception e) {
+            _log.error("Erro ao carregar template: " + nomeArquivo, e);
+            throw e;
+        }
+    }
+
+    /**
+     * Verifica o status de preenchimento da avaliação.
+     * Retorna quais avaliadores já preencheram suas partes.
+     */
+    private static StatusPreenchimento verificarStatusPreenchimento(Avaliacao avaliacao) {
+        try {
+            List<AvaliacaoDetalhe> detalhes =
+                    AvaliacaoDetalheLocalServiceUtil.findByAvaliacaoId(avaliacao.getAvaliacaoId());
+
+            boolean techLeadOk = false;
+            boolean gerenteOk = false;
+            boolean rhOk = false;
+
+            for (AvaliacaoDetalhe detalhe : detalhes) {
+                boolean preenchido = isDetalhePreenchido(detalhe);
+
+                if (preenchido) {
+                    switch (detalhe.getTipoAvaliador()) {
+                        case 1:
+                            techLeadOk = true;
+                            break;
+                        case 2:
+                            gerenteOk = true;
+                            break;
+                        case 3:
+                            rhOk = true;
+                            break;
+                    }
+                }
+            }
+
+            return new StatusPreenchimento(techLeadOk, gerenteOk, rhOk);
+
+        } catch (Exception e) {
+            _log.error("Erro ao verificar status de preenchimento", e);
+            return new StatusPreenchimento(false, false, false);
+        }
+    }
+
+    /**
+     * Verifica se um detalhe foi preenchido.
+     * Considera preenchido se tem observações e desempenho > 0.
+     */
+    private static boolean isDetalhePreenchido(AvaliacaoDetalhe detalhe) {
+        return detalhe.getObservacoesAvaliador() != null &&
+                !detalhe.getObservacoesAvaliador().trim().isEmpty() &&
+                detalhe.getDesempenho() > 0;
+    }
+
+    /**
+     * Envia email para um grupo de usuários.
+     */
+    private static void enviarEmailParaGrupo(List<User> usuarios, String assunto, String corpo) {
+        for (User usuario : usuarios) {
+            try {
+                InternetAddress from = new InternetAddress(
+                        "noreply@seatecnologia.com.br",
+                        "Sistema de Avaliação - SEA"
+                );
+                InternetAddress to = new InternetAddress(
+                        usuario.getEmailAddress(),
+                        usuario.getFullName()
+                );
+
+                MailMessage mailMessage = new MailMessage();
+                mailMessage.setHTMLFormat(true);
+                mailMessage.setFrom(from);
+                mailMessage.setTo(to);
+                mailMessage.setSubject(assunto);
+                mailMessage.setBody(corpo);
+
+                MailServiceUtil.sendEmail(mailMessage);
+
+                _log.info("Email enviado com sucesso para: " + usuario.getEmailAddress());
+
+            } catch (Exception e) {
+                _log.error("Erro ao enviar email para " + usuario.getEmailAddress(), e);
+            }
+        }
+    }
+
+    /**
+     * Retorna nome amigável do tipo de avaliador.
+     */
+    private static String getNomeTipoAvaliador(int tipo) {
+        switch (tipo) {
+            case 1: return "Tech Lead";
+            case 2: return "Gerente";
+            case 3: return "RH";
+            default: return "Avaliador";
+        }
+    }
+
+    /**
+     * Classe que encapsula o status de preenchimento da avaliação.
+     * Indica quais avaliadores já preencheram suas respectivas partes.
+     */
+    private static class StatusPreenchimento {
+        boolean techLeadPreenchido;
+        boolean gerentePreenchido;
+        boolean rhPreenchido;
+
+        StatusPreenchimento(boolean techLead, boolean gerente, boolean rh) {
+            this.techLeadPreenchido = techLead;
+            this.gerentePreenchido = gerente;
+            this.rhPreenchido = rh;
+        }
+
+        /**
+         * Verifica se a avaliação está completa (todos os 3 preencheram).
+         */
+        boolean isCompleta() {
+            return techLeadPreenchido && gerentePreenchido && rhPreenchido;
+        }
+    }
+
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
+    private static final SimpleDateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy");
     private static final Log _log = LogFactoryUtil.getLog(EmailNotificationUtil.class);
 }

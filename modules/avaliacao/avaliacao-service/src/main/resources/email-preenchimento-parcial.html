@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preenchimento Parcial</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f3f4f6;">
+
+<!-- Container Principal -->
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f3f4f6; padding: 20px 0;">
+    <tr>
+        <td align="center">
+            <!-- Card do Email -->
+            <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+
+                <!-- HEADER AZUL -->
+                <tr>
+                    <td style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); padding: 40px 30px; text-align: center;">
+                        <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold;">
+                            📝 Nova Avaliação Preenchida
+                        </h1>
+                        <p style="margin: 10px 0 0 0; color: #ffffff; font-size: 14px; opacity: 0.9;">
+                            Um avaliador concluiu sua parte
+                        </p>
+                    </td>
+                </tr>
+
+                <!-- CONTEÚDO -->
+                <tr>
+                    <td style="padding: 30px;">
+
+                        <!-- Saudação -->
+                        <p style="font-size: 16px; color: #111827; margin: 0 0 20px 0;">
+                            Olá,
+                        </p>
+
+                        <p style="font-size: 15px; color: #374151; line-height: 1.6; margin: 0 0 25px 0;">
+                            O <strong style="color: #3b82f6;">{{NOME_AVALIADOR}}</strong> preencheu sua avaliação do colaborador
+                            <strong style="color: #111827;">{{FUNCIONARIO_NOME}}</strong>.
+                        </p>
+
+                        <!-- Card de Status -->
+                        <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f9fafb; border-radius: 8px; border: 1px solid #e5e7eb; margin-bottom: 25px;">
+                            <tr>
+                                <td style="padding: 20px;">
+                                    <h3 style="margin: 0 0 15px 0; color: #111827; font-size: 16px; font-weight: bold;">
+                                        📊 Status da Avaliação
+                                    </h3>
+
+                                    <!-- Tech Lead -->
+                                    <div style="margin-bottom: 10px; padding: 10px; background-color: {{STATUS_TECH_LEAD_BG}}; border-radius: 6px;">
+                                        <span style="font-size: 18px; margin-right: 8px;">{{STATUS_TECH_LEAD_ICON}}</span>
+                                        <strong style="color: #111827; font-size: 14px;">Tech Lead:</strong>
+                                        <span style="color: #6b7280; font-size: 14px;">{{STATUS_TECH_LEAD_TEXTO}}</span>
+                                    </div>
+
+                                    <!-- Gerente -->
+                                    <div style="margin-bottom: 10px; padding: 10px; background-color: {{STATUS_GERENTE_BG}}; border-radius: 6px;">
+                                        <span style="font-size: 18px; margin-right: 8px;">{{STATUS_GERENTE_ICON}}</span>
+                                        <strong style="color: #111827; font-size: 14px;">Gerente:</strong>
+                                        <span style="color: #6b7280; font-size: 14px;">{{STATUS_GERENTE_TEXTO}}</span>
+                                    </div>
+
+                                    <!-- RH -->
+                                    <div style="padding: 10px; background-color: {{STATUS_RH_BG}}; border-radius: 6px;">
+                                        <span style="font-size: 18px; margin-right: 8px;">{{STATUS_RH_ICON}}</span>
+                                        <strong style="color: #111827; font-size: 14px;">RH:</strong>
+                                        <span style="color: #6b7280; font-size: 14px;">{{STATUS_RH_TEXTO}}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <!-- Alerta de Pendência (se não completo) -->
+                        {{ALERTA_PENDENCIA}}
+
+                        <!-- Informação -->
+                        <p style="font-size: 14px; color: #6b7280; line-height: 1.6; margin: 0;">
+                            Você receberá uma nova notificação quando todos os avaliadores preencherem suas partes.
+                        </p>
+
+                    </td>
+                </tr>
+
+                <!-- FOOTER -->
+                <tr>
+                    <td style="background-color: #f3f4f6; padding: 20px; text-align: center; border-top: 1px solid #e5e7eb;">
+                        <p style="margin: 0 0 5px 0; font-size: 12px; color: #6b7280;">
+                            <strong>Sistema de Avaliação 90 Dias</strong>
+                        </p>
+                        <p style="margin: 0; font-size: 11px; color: #9ca3af;">
+                            SEA TECNOLOGIA - Esta é uma mensagem automática, não responda este email.
+                        </p>
+                    </td>
+                </tr>
+
+            </table>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

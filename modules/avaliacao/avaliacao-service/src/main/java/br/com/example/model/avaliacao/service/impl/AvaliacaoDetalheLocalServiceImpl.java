@@ -9,15 +9,21 @@ import br.com.example.model.avaliacao.enums.DesempenhoEnum;
 import br.com.example.model.avaliacao.enums.TipoAvaliadorEnum;
 import br.com.example.model.avaliacao.model.Avaliacao;
 import br.com.example.model.avaliacao.model.AvaliacaoDetalhe;
+import br.com.example.model.avaliacao.notification.EmailNotificationUtil;
+import br.com.example.model.avaliacao.permission.AvaliacaoPermissionChecker;
 import br.com.example.model.avaliacao.service.base.AvaliacaoDetalheLocalServiceBaseImpl;
 import com.liferay.portal.aop.AopService;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 import java.util.Date;
 import java.util.List;
@@ -152,8 +158,47 @@ public class AvaliacaoDetalheLocalServiceImpl
 		avaliacaoDetalhe.setModifiedDate(new Date());
 		avaliacaoDetalhe.setUserId(serviceContext.getUserId());
 
-		// 6. Persiste as alterações
-		return super.updateAvaliacaoDetalhe(avaliacaoDetalhe);
+		// 6. Persiste as alterações e retorna
+		AvaliacaoDetalhe avaliacaoDetalheAtualizado =
+				super.updateAvaliacaoDetalhe(avaliacaoDetalhe);
+
+		try {
+			Avaliacao avaliacaoPai = avaliacaoPersistence.fetchByPrimaryKey(
+					avaliacaoDetalhe.getAvaliacaoId()
+			);
+
+			// Verificar se encontrou
+			if (avaliacaoPai == null) {
+				_log.warn("Avaliação pai não encontrada. ID: " +
+						avaliacaoDetalhe.getAvaliacaoId());
+				return avaliacaoDetalheAtualizado;
+			}
+
+			// Buscar usuários RH
+			List<User> usuariosRH = _permissionChecker.getUsersComRole(
+					"Avaliador_RH",
+					serviceContext.getCompanyId()
+			);
+
+			// Enviar notificação
+			if (!usuariosRH.isEmpty()) {
+				EmailNotificationUtil.enviarNotificacaoPreenchimento(
+						avaliacaoPai,
+						tipoAvaliador,
+						usuariosRH
+				);
+
+				_log.info("Notificação enviada com sucesso!");
+			}
+
+		} catch (Exception e) {
+			_log.warn("Erro ao enviar notificação", e);
+		}
+
+
+		// 8. Retornar o objeto atualizado
+		return avaliacaoDetalheAtualizado;
+
 	}
 
 	/**
@@ -220,7 +265,10 @@ public class AvaliacaoDetalheLocalServiceImpl
 		}
 	}
 
+	private static final Log _log = LogFactoryUtil.getLog(AvaliacaoDetalheLocalServiceImpl.class);
 
+	@Reference
+	private AvaliacaoPermissionChecker _permissionChecker;
 
 	}
 

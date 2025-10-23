@@ -36,6 +36,7 @@ public class AvaliacaoWrapper
 		attributes.put("companyId", getCompanyId());
 		attributes.put("groupId", getGroupId());
 		attributes.put("userId", getUserId());
+		attributes.put("userName", getUserName());
 		attributes.put("createDate", getCreateDate());
 		attributes.put("modifiedDate", getModifiedDate());
 		attributes.put("avaliacaoId", getAvaliacaoId());
@@ -66,6 +67,12 @@ public class AvaliacaoWrapper
 
 		if (userId != null) {
 			setUserId(userId);
+		}
+
+		String userName = (String)attributes.get("userName");
+
+		if (userName != null) {
+			setUserName(userName);
 		}
 
 		Date createDate = (Date)attributes.get("createDate");
@@ -243,6 +250,16 @@ public class AvaliacaoWrapper
 	}
 
 	/**
+	 * Returns the user name of this avaliacao.
+	 *
+	 * @return the user name of this avaliacao
+	 */
+	@Override
+	public String getUserName() {
+		return model.getUserName();
+	}
+
+	/**
 	 * Returns the user uuid of this avaliacao.
 	 *
 	 * @return the user uuid of this avaliacao
@@ -375,6 +392,16 @@ public class AvaliacaoWrapper
 	@Override
 	public void setUserId(long userId) {
 		model.setUserId(userId);
+	}
+
+	/**
+	 * Sets the user name of this avaliacao.
+	 *
+	 * @param userName the user name of this avaliacao
+	 */
+	@Override
+	public void setUserName(String userName) {
+		model.setUserName(userName);
 	}
 
 	/**

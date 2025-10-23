@@ -2,6 +2,7 @@ create table DESAFIO_Avaliacao (
 	companyId LONG,
 	groupId LONG,
 	userId LONG,
+	userName VARCHAR(75) null,
 	createDate DATE null,
 	modifiedDate DATE null,
 	avaliacaoId LONG not null primary key,

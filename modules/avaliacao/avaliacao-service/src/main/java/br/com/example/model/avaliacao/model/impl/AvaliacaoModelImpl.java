@@ -62,11 +62,11 @@ public class AvaliacaoModelImpl
 
 	public static final Object[][] TABLE_COLUMNS = {
 		{"companyId", Types.BIGINT}, {"groupId", Types.BIGINT},
-		{"userId", Types.BIGINT}, {"createDate", Types.TIMESTAMP},
-		{"modifiedDate", Types.TIMESTAMP}, {"avaliacaoId", Types.BIGINT},
-		{"funcionarioId", Types.BIGINT}, {"dataAvaliacao", Types.TIMESTAMP},
-		{"periodoDesafio", Types.INTEGER}, {"observacoesGerais", Types.VARCHAR},
-		{"areaAtuacao", Types.INTEGER}
+		{"userId", Types.BIGINT}, {"userName", Types.VARCHAR},
+		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
+		{"avaliacaoId", Types.BIGINT}, {"funcionarioId", Types.BIGINT},
+		{"dataAvaliacao", Types.TIMESTAMP}, {"periodoDesafio", Types.INTEGER},
+		{"observacoesGerais", Types.VARCHAR}, {"areaAtuacao", Types.INTEGER}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -76,6 +76,7 @@ public class AvaliacaoModelImpl
 		TABLE_COLUMNS_MAP.put("companyId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("groupId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("userId", Types.BIGINT);
+		TABLE_COLUMNS_MAP.put("userName", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("createDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
 		TABLE_COLUMNS_MAP.put("avaliacaoId", Types.BIGINT);
@@ -87,7 +88,7 @@ public class AvaliacaoModelImpl
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table DESAFIO_Avaliacao (companyId LONG,groupId LONG,userId LONG,createDate DATE null,modifiedDate DATE null,avaliacaoId LONG not null primary key,funcionarioId LONG,dataAvaliacao DATE null,periodoDesafio INTEGER,observacoesGerais VARCHAR(500) null,areaAtuacao INTEGER)";
+		"create table DESAFIO_Avaliacao (companyId LONG,groupId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,avaliacaoId LONG not null primary key,funcionarioId LONG,dataAvaliacao DATE null,periodoDesafio INTEGER,observacoesGerais VARCHAR(500) null,areaAtuacao INTEGER)";
 
 	public static final String TABLE_SQL_DROP = "drop table DESAFIO_Avaliacao";
 
@@ -238,6 +239,7 @@ public class AvaliacaoModelImpl
 			attributeGetterFunctions.put("companyId", Avaliacao::getCompanyId);
 			attributeGetterFunctions.put("groupId", Avaliacao::getGroupId);
 			attributeGetterFunctions.put("userId", Avaliacao::getUserId);
+			attributeGetterFunctions.put("userName", Avaliacao::getUserName);
 			attributeGetterFunctions.put(
 				"createDate", Avaliacao::getCreateDate);
 			attributeGetterFunctions.put(
@@ -277,6 +279,9 @@ public class AvaliacaoModelImpl
 				"groupId", (BiConsumer<Avaliacao, Long>)Avaliacao::setGroupId);
 			attributeSetterBiConsumers.put(
 				"userId", (BiConsumer<Avaliacao, Long>)Avaliacao::setUserId);
+			attributeSetterBiConsumers.put(
+				"userName",
+				(BiConsumer<Avaliacao, String>)Avaliacao::setUserName);
 			attributeSetterBiConsumers.put(
 				"createDate",
 				(BiConsumer<Avaliacao, Date>)Avaliacao::setCreateDate);
@@ -364,6 +369,25 @@ public class AvaliacaoModelImpl
 
 	@Override
 	public void setUserUuid(String userUuid) {
+	}
+
+	@Override
+	public String getUserName() {
+		if (_userName == null) {
+			return "";
+		}
+		else {
+			return _userName;
+		}
+	}
+
+	@Override
+	public void setUserName(String userName) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_userName = userName;
 	}
 
 	@Override
@@ -578,6 +602,7 @@ public class AvaliacaoModelImpl
 		avaliacaoImpl.setCompanyId(getCompanyId());
 		avaliacaoImpl.setGroupId(getGroupId());
 		avaliacaoImpl.setUserId(getUserId());
+		avaliacaoImpl.setUserName(getUserName());
 		avaliacaoImpl.setCreateDate(getCreateDate());
 		avaliacaoImpl.setModifiedDate(getModifiedDate());
 		avaliacaoImpl.setAvaliacaoId(getAvaliacaoId());
@@ -600,6 +625,8 @@ public class AvaliacaoModelImpl
 			this.<Long>getColumnOriginalValue("companyId"));
 		avaliacaoImpl.setGroupId(this.<Long>getColumnOriginalValue("groupId"));
 		avaliacaoImpl.setUserId(this.<Long>getColumnOriginalValue("userId"));
+		avaliacaoImpl.setUserName(
+			this.<String>getColumnOriginalValue("userName"));
 		avaliacaoImpl.setCreateDate(
 			this.<Date>getColumnOriginalValue("createDate"));
 		avaliacaoImpl.setModifiedDate(
@@ -698,6 +725,14 @@ public class AvaliacaoModelImpl
 		avaliacaoCacheModel.groupId = getGroupId();
 
 		avaliacaoCacheModel.userId = getUserId();
+
+		avaliacaoCacheModel.userName = getUserName();
+
+		String userName = avaliacaoCacheModel.userName;
+
+		if ((userName != null) && (userName.length() == 0)) {
+			avaliacaoCacheModel.userName = null;
+		}
 
 		Date createDate = getCreateDate();
 
@@ -806,6 +841,7 @@ public class AvaliacaoModelImpl
 	private long _companyId;
 	private long _groupId;
 	private long _userId;
+	private String _userName;
 	private Date _createDate;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
@@ -847,6 +883,7 @@ public class AvaliacaoModelImpl
 		_columnOriginalValues.put("companyId", _companyId);
 		_columnOriginalValues.put("groupId", _groupId);
 		_columnOriginalValues.put("userId", _userId);
+		_columnOriginalValues.put("userName", _userName);
 		_columnOriginalValues.put("createDate", _createDate);
 		_columnOriginalValues.put("modifiedDate", _modifiedDate);
 		_columnOriginalValues.put("avaliacaoId", _avaliacaoId);
@@ -874,21 +911,23 @@ public class AvaliacaoModelImpl
 
 		columnBitmasks.put("userId", 4L);
 
-		columnBitmasks.put("createDate", 8L);
+		columnBitmasks.put("userName", 8L);
 
-		columnBitmasks.put("modifiedDate", 16L);
+		columnBitmasks.put("createDate", 16L);
 
-		columnBitmasks.put("avaliacaoId", 32L);
+		columnBitmasks.put("modifiedDate", 32L);
 
-		columnBitmasks.put("funcionarioId", 64L);
+		columnBitmasks.put("avaliacaoId", 64L);
 
-		columnBitmasks.put("dataAvaliacao", 128L);
+		columnBitmasks.put("funcionarioId", 128L);
 
-		columnBitmasks.put("periodoDesafio", 256L);
+		columnBitmasks.put("dataAvaliacao", 256L);
 
-		columnBitmasks.put("observacoesGerais", 512L);
+		columnBitmasks.put("periodoDesafio", 512L);
 
-		columnBitmasks.put("areaAtuacao", 1024L);
+		columnBitmasks.put("observacoesGerais", 1024L);
+
+		columnBitmasks.put("areaAtuacao", 2048L);
 
 		_columnBitmasks = Collections.unmodifiableMap(columnBitmasks);
 	}

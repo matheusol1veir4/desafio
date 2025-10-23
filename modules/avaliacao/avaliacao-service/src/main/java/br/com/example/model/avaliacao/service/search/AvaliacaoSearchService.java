@@ -136,22 +136,22 @@ public class AvaliacaoSearchService {
         // Filtro por área
         if (area != null) {
             if (avaliacao.getAreaAtuacao() != area) {
-                _log.info(" ❌ Rejeitada por área. Esperado: " + area + ", Real: " + avaliacao.getAreaAtuacao());
+                _log.info(" Rejeitada por área. Esperado: " + area + ", Real: " + avaliacao.getAreaAtuacao());
                 return false;
             }
-            _log.info(" ✅ Passou no filtro de área");
+            _log.info("  Passou no filtro de área");
         }
 
         // Filtro por período - CORRIGIDO: Converte código para dias
         if (periodo != null) {
             int periodoEmDias = convertCodigoParaDias(periodo);
-            _log.info(" 🔄 Convertendo período: código " + periodo + " → " + periodoEmDias + " dias");  // ← ADICIONE ESTA LINHA
-            _log.info(" 🔍 Comparando: periodoDesafio do banco=" + avaliacao.getPeriodoDesafio() + " vs filtro=" + periodoEmDias);  // ← ADICIONE ESTA LINHA
+            _log.info(" Convertendo período: código " + periodo + " → " + periodoEmDias + " dias");  // ← ADICIONE ESTA LINHA
+            _log.info(" Comparando: periodoDesafio do banco=" + avaliacao.getPeriodoDesafio() + " vs filtro=" + periodoEmDias);  // ← ADICIONE ESTA LINHA
             if (avaliacao.getPeriodoDesafio() != periodoEmDias) {
-                _log.info(" ❌ Rejeitada por período. Esperado: " + periodo + " (" + periodoEmDias + " dias), Real: " + avaliacao.getPeriodoDesafio());
+                _log.info("  Rejeitada por período. Esperado: " + periodo + " (" + periodoEmDias + " dias), Real: " + avaliacao.getPeriodoDesafio());
                 return false;
             }
-            _log.info(" ✅ Passou no filtro de período");
+            _log.info(" Passou no filtro de período");
         }
 
         // Filtro por data
@@ -162,10 +162,10 @@ public class AvaliacaoSearchService {
                 String dataAvaliacao = sdf.format(avaliacao.getDataAvaliacao());
                 String dataFiltroStr = sdf.format(dataFiltro);
                 if (!dataAvaliacao.equals(dataFiltroStr)) {
-                    _log.info(" ❌ Rejeitada por data. Esperado: " + dataFiltroStr + ", Real: " + dataAvaliacao);
+                    _log.info(" Rejeitada por data. Esperado: " + dataFiltroStr + ", Real: " + dataAvaliacao);
                     return false;
                 }
-                _log.info(" ✅ Passou no filtro de data");
+                _log.info(" Passou no filtro de data");
             } catch (ParseException e) {
                 _log.warn(" Erro ao parse data: " + data, e);
                 return false;
@@ -184,10 +184,10 @@ public class AvaliacaoSearchService {
                     boolean match = nomeCompleto.contains(nomeBusca);
                     _log.info(" Filtro nome: '" + nomeBusca + "' contains em '" + nomeCompleto + "' = " + match);
                     if (!match) {
-                        _log.info(" ❌ Rejeitada por nome");
+                        _log.info(" Rejeitada por nome");
                         return false;
                     }
-                    _log.info(" ✅ Passou no filtro de nome");
+                    _log.info(" Passou no filtro de nome");
                 }
 
                 if (Validator.isNotNull(email)) {
@@ -196,10 +196,10 @@ public class AvaliacaoSearchService {
                     boolean match = emailUser.contains(emailBusca);
                     _log.info(" Filtro email: '" + emailBusca + "' contains em '" + emailUser + "' = " + match);
                     if (!match) {
-                        _log.info(" ❌ Rejeitada por email");
+                        _log.info(" Rejeitada por email");
                         return false;
                     }
-                    _log.info(" ✅ Passou no filtro de email");
+                    _log.info(" Passou no filtro de email");
                 }
 
             } catch (Exception e) {
@@ -208,7 +208,7 @@ public class AvaliacaoSearchService {
             }
         }
 
-        _log.info(" ✅✅✅ Avaliação ACEITA!");
+        _log.info(" Avaliação ACEITA!");
         return true;
     }
 

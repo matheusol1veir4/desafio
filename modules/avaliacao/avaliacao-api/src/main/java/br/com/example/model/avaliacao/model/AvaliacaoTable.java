@@ -29,6 +29,8 @@ public class AvaliacaoTable extends BaseTable<AvaliacaoTable> {
 		"groupId", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
 	public final Column<AvaliacaoTable, Long> userId = createColumn(
 		"userId", Long.class, Types.BIGINT, Column.FLAG_DEFAULT);
+	public final Column<AvaliacaoTable, String> userName = createColumn(
+		"userName", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 	public final Column<AvaliacaoTable, Date> createDate = createColumn(
 		"createDate", Date.class, Types.TIMESTAMP, Column.FLAG_DEFAULT);
 	public final Column<AvaliacaoTable, Date> modifiedDate = createColumn(

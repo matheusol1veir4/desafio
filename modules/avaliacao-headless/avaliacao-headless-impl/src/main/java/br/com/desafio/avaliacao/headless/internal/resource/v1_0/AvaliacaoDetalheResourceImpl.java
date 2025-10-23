@@ -3,6 +3,7 @@ package br.com.desafio.avaliacao.headless.internal.resource.v1_0;
 import br.com.desafio.avaliacao.headless.dto.v1_0.AvaliacaoDetalhe;
 import br.com.desafio.avaliacao.headless.internal.converter.ConverterDto;
 import br.com.desafio.avaliacao.headless.resource.v1_0.AvaliacaoDetalheResource;
+import br.com.example.model.avaliacao.permission.AvaliacaoPermissionChecker;
 import br.com.example.model.avaliacao.service.AvaliacaoLocalService;
 import br.com.example.model.avaliacao.service.AvaliacaoDetalheLocalService;
 
@@ -107,22 +108,40 @@ public class AvaliacaoDetalheResourceImpl extends BaseAvaliacaoDetalheResourceIm
 	 * @throws PortalException se o detalhe não existir ou dados forem inválidos
 	 */
 	@Override
-	public AvaliacaoDetalhe updateAvaliacaoDetalhe(Long avaliacaoDetalheId,
-												   AvaliacaoDetalhe avaliacaoDetalhe) throws PortalException {
+	public AvaliacaoDetalhe updateAvaliacaoDetalhe(
+			Long avaliacaoDetalheId,
+			AvaliacaoDetalhe avaliacaoDetalhe) throws PortalException {
 
-		// Chama LocalService para atualizar detalhe existente
-		br.com.example.model.avaliacao.model.AvaliacaoDetalhe entity =
+		// 1. Obter userId autenticado
+		long userId = getUserIdFromRequest();
+
+		// 2. Buscar entity existente
+		br.com.example.model.avaliacao.model.AvaliacaoDetalhe detalheEntity =
+				_avaliacaoDetalheLocalService.getAvaliacaoDetalhe(avaliacaoDetalheId);
+
+		// 3. VALIDAR PERMISSÃO
+		if (!_permissionChecker.podeEditarDetalhe(userId, detalheEntity)) {
+			throw new PortalException(
+					"Você não tem permissão para editar este detalhe. " +
+					"Apenas o responsável autorizado pode modificar esta seção."
+			);
+		}
+
+		// 4. Atualizar
+		br.com.example.model.avaliacao.model.AvaliacaoDetalhe updatedEntity =
 				_avaliacaoDetalheLocalService.updateAvaliacaoDetalhe(
-						avaliacaoDetalheId,                      // ID do detalhe a atualizar
-						avaliacaoDetalhe.getTipoAvaliador(),     // Novo tipo avaliador
-						avaliacaoDetalhe.getNomeAvaliador(),     // Novo nome avaliador
-						avaliacaoDetalhe.getObservacoesAvaliador(), // Novas observações
-						avaliacaoDetalhe.getDesempenho(),        // Nova nota desempenho
-						createServiceContext()                   // Contexto da requisição
+						avaliacaoDetalheId,
+						avaliacaoDetalhe.getTipoAvaliador(),
+						avaliacaoDetalhe.getNomeAvaliador(),
+						avaliacaoDetalhe.getObservacoesAvaliador(),
+						avaliacaoDetalhe.getDesempenho(),
+						createServiceContext()
 				);
 
-		return ConverterDto.detalheEntityToDto(entity);  // Retorna DTO atualizado
+		// 5. Retornar DTO
+		return ConverterDto.detalheEntityToDto(updatedEntity);
 	}
+
 
 	/**
 	 * Deleta detalhe específico de avaliação.
@@ -174,9 +193,23 @@ public class AvaliacaoDetalheResourceImpl extends BaseAvaliacaoDetalheResourceIm
 		return serviceContext;  // Retorna contexto configurado
 	}
 
+	private long getUserIdFromRequest() {
+		if (contextHttpServletRequest != null) {
+			try {
+				return PortalUtil.getUserId(contextHttpServletRequest);
+			} catch (Exception e) {
+				return 0L;
+			}
+		}
+		return 0L;
+	}
+
 	@Reference
 	private AvaliacaoLocalService _avaliacaoLocalService;  // Para buscar avaliação pai
 
 	@Reference
 	private AvaliacaoDetalheLocalService _avaliacaoDetalheLocalService;  // Para operações CRUD
+
+	@Reference
+	private AvaliacaoPermissionChecker _permissionChecker;
 }

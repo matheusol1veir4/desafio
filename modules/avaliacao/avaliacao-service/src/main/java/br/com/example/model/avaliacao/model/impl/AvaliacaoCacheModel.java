@@ -53,7 +53,7 @@ public class AvaliacaoCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(23);
+		StringBundler sb = new StringBundler(25);
 
 		sb.append("{companyId=");
 		sb.append(companyId);
@@ -61,6 +61,8 @@ public class AvaliacaoCacheModel
 		sb.append(groupId);
 		sb.append(", userId=");
 		sb.append(userId);
+		sb.append(", userName=");
+		sb.append(userName);
 		sb.append(", createDate=");
 		sb.append(createDate);
 		sb.append(", modifiedDate=");
@@ -89,6 +91,13 @@ public class AvaliacaoCacheModel
 		avaliacaoImpl.setCompanyId(companyId);
 		avaliacaoImpl.setGroupId(groupId);
 		avaliacaoImpl.setUserId(userId);
+
+		if (userName == null) {
+			avaliacaoImpl.setUserName("");
+		}
+		else {
+			avaliacaoImpl.setUserName(userName);
+		}
 
 		if (createDate == Long.MIN_VALUE) {
 			avaliacaoImpl.setCreateDate(null);
@@ -137,6 +146,7 @@ public class AvaliacaoCacheModel
 		groupId = objectInput.readLong();
 
 		userId = objectInput.readLong();
+		userName = objectInput.readUTF();
 		createDate = objectInput.readLong();
 		modifiedDate = objectInput.readLong();
 
@@ -158,6 +168,14 @@ public class AvaliacaoCacheModel
 		objectOutput.writeLong(groupId);
 
 		objectOutput.writeLong(userId);
+
+		if (userName == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(userName);
+		}
+
 		objectOutput.writeLong(createDate);
 		objectOutput.writeLong(modifiedDate);
 
@@ -181,6 +199,7 @@ public class AvaliacaoCacheModel
 	public long companyId;
 	public long groupId;
 	public long userId;
+	public String userName;
 	public long createDate;
 	public long modifiedDate;
 	public long avaliacaoId;
