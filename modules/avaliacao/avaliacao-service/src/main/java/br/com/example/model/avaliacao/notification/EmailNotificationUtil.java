@@ -15,6 +15,8 @@ import com.liferay.portal.kernel.util.StringUtil;
 import javax.mail.internet.InternetAddress;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -143,7 +145,7 @@ public class EmailNotificationUtil {
                 .replace("{{PERIODO_DESAFIO}}", String.valueOf(avaliacao.getPeriodoDesafio()))
                 .replace("{{DATA_AVALIACAO}}", DATE_FORMAT.format(avaliacao.getDataAvaliacao()));
 
-        String assunto = "✅ Avaliação Completa - " + funcionario.getFullName();
+        String assunto = "Avaliação Completa - " + funcionario.getFullName();
 
         enviarEmailParaGrupo(usuariosRH, assunto, htmlContent);
 
@@ -345,6 +347,94 @@ public class EmailNotificationUtil {
          */
         boolean isCompleta() {
             return techLeadPreenchido && gerentePreenchido && rhPreenchido;
+        }
+    }
+
+    /**
+     * Envia email inicial para todos os avaliadores quando RH cria a avaliação.
+     * Notifica TechLead, Gerente e RH que uma nova avaliação foi criada e aguarda preenchimento.
+     *
+     * Este método é chamado imediatamente após a criação dos 3 detalhes vazios pelo RH.
+     * Envia um único email para cada avaliador informando que há uma avaliação pendente.
+     *
+     * ➕ MÉTODO NOVO - implementa nova regra de negócio de notificação inicial
+     *
+     * @param avaliacao Avaliação recém-criada
+     * @param companyId ID da company para buscar usuários
+     * @param permissionChecker Helper para buscar usuários por role
+     */
+    public static void enviarEmailInicialParaAvaliadores(
+            Avaliacao avaliacao,
+            long companyId,
+            br.com.example.model.avaliacao.permission.AvaliacaoPermissionChecker permissionChecker) {
+
+        try {
+            User funcionario = UserLocalServiceUtil.getUser(avaliacao.getFuncionarioId());
+
+            // Busca TODOS os avaliadores (TechLead + Gerente + RH)
+            List<User> todosAvaliadores = new ArrayList<>();
+
+            // Adiciona Tech Leads
+            try {
+                List<User> techLeads = permissionChecker.getUsersComRole(
+                        "Avaliador_TechLead", companyId
+                );
+                todosAvaliadores.addAll(techLeads);
+                _log.info("Encontrados " + techLeads.size() + " Tech Leads para notificar");
+            } catch (Exception e) {
+                _log.warn("Nenhum Tech Lead encontrado", e);
+            }
+
+            // Adiciona Gerentes
+            try {
+                List<User> gerentes = permissionChecker.getUsersComRole(
+                        "Avaliador_Gerente", companyId
+                );
+                todosAvaliadores.addAll(gerentes);
+                _log.info("Encontrados " + gerentes.size() + " Gerentes para notificar");
+            } catch (Exception e) {
+                _log.warn("Nenhum Gerente encontrado", e);
+            }
+
+            // Adiciona RH
+            try {
+                List<User> rhs = permissionChecker.getUsersComRole(
+                        "Avaliador_RH", companyId
+                );
+                todosAvaliadores.addAll(rhs);
+                _log.info("Encontrados " + rhs.size() + " RHs para notificar");
+            } catch (Exception e) {
+                _log.warn("Nenhum RH encontrado", e);
+            }
+
+            if (todosAvaliadores.isEmpty()) {
+                _log.warn("Nenhum avaliador encontrado para enviar notificação inicial!");
+                return;
+            }
+
+            // Carrega template de nova avaliação criada
+            String htmlTemplate = carregarTemplate("email-template.html");
+
+            // Substitui placeholders
+            String htmlContent = htmlTemplate
+                    .replace("{{nomeFuncionario}}", funcionario.getFullName())
+                    .replace("{{periodoDesafio}}", String.valueOf(avaliacao.getPeriodoDesafio()))
+                    .replace("{{dataAvaliacao}}", DATE_FORMAT.format(avaliacao.getDataAvaliacao()))
+                    .replace("{{anoAtual}}", YEAR_FORMAT.format(new Date()));
+
+            String assunto = "🆕 Nova Avaliação Criada - " + funcionario.getFullName() +
+                    " (" + avaliacao.getPeriodoDesafio() + " dias)";
+
+            // Envia para todos os avaliadores
+            enviarEmailParaGrupo(todosAvaliadores, assunto, htmlContent);
+
+            _log.info("Email inicial enviado para " + todosAvaliadores.size() +
+                    " avaliadores (Avaliação ID: " + avaliacao.getAvaliacaoId() + ")");
+
+        } catch (Exception e) {
+            // NÃO FALHAR a operação principal se notificação der erro
+            _log.error("Erro ao enviar email inicial para avaliadores " +
+                    "(Avaliação ID: " + avaliacao.getAvaliacaoId() + ")", e);
         }
     }
 

@@ -95,7 +95,7 @@ public class AvaliacaoDetalheLocalServiceImpl
 			ServiceContext serviceContext) throws PortalException {
 
 
-		validateAvaliacaoDetalheFields(avaliacao, tipoAvaliador, nomeAvaliador, observacoesAvaliador, desempenho);
+		validateAvaliacaoDetalheFields(avaliacao,tipoAvaliador,desempenho);
 
 		// Gera um ID Único
 		long avaliacaoDetalheId = counterLocalService.increment(AvaliacaoDetalhe.class.getName());
@@ -114,20 +114,43 @@ public class AvaliacaoDetalheLocalServiceImpl
 		avaliacaoDetalhe.setCreateDate(new Date());
 		avaliacaoDetalhe.setModifiedDate(new Date());
 
-		return super.addAvaliacaoDetalhe(avaliacaoDetalhe);
+		AvaliacaoDetalhe detalheSalvo = super.addAvaliacaoDetalhe(avaliacaoDetalhe);
+
+		if (isDetalhePreenchido(detalheSalvo)) {
+			try {
+				List<User> usuariosRH = _permissionChecker.getUsersComRole(
+						"Avaliador_RH",
+						serviceContext.getCompanyId()
+				);
+
+				if (!usuariosRH.isEmpty()) {
+					EmailNotificationUtil.enviarNotificacaoPreenchimento(
+							avaliacao,
+							tipoAvaliador,
+							usuariosRH
+					);
+					_log.info("Notificação enviada com sucesso após criação de detalhe preenchido!");
+				}
+			} catch (Exception e) {
+				_log.warn("Erro ao enviar notificação após criação", e);
+			}
+		}
+
+		return detalheSalvo;
 	}
 
 	/**
 	 * Atualiza um detalhe de avaliação existente.
+	 * O tipo de avaliador NÃO pode ser alterado após a criação (imutável).
 	 *
 	 * @param avaliacaoDetalheId   ID do detalhe a ser atualizado
-	 * @param tipoAvaliador        Tipo do avaliador (1=TechLead, 2=Gerente, 3=RH)
+	 * @param tipoAvaliador        Tipo do avaliador (deve ser igual ao original, não pode mudar)
 	 * @param nomeAvaliador        Nome completo do avaliador
 	 * @param observacoesAvaliador Comentários específicos do avaliador
 	 * @param desempenho           Nota de desempenho (1-5 conforme DesempenhoEnum)
 	 * @param serviceContext       Contexto de serviço com informações de auditoria
 	 * @return                     O detalhe de avaliação atualizado
-	 * @throws PortalException     se os dados fornecidos forem inválidos
+	 * @throws PortalException     se os dados forem inválidos ou tipo de avaliador for diferente do original
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
@@ -145,11 +168,17 @@ public class AvaliacaoDetalheLocalServiceImpl
 		// 2. Busca a avaliação para validação
 		Avaliacao avaliacao = avaliacaoPersistence.fetchByPrimaryKey(avaliacaoDetalhe.getAvaliacaoId());
 
+		// 2.1 Valida que tipo de avaliador não pode ser alterado
+		if (avaliacaoDetalhe.getTipoAvaliador() != tipoAvaliador) {
+			throw new PortalException(
+					"Não é permitido alterar o tipo de avaliador após criação."
+			);
+		}
+
 		// 3. Valida os novos dados
-		validateAvaliacaoDetalheFields(avaliacao, tipoAvaliador, nomeAvaliador, observacoesAvaliador, desempenho);
+		validateAvaliacaoDetalheFieldsUpdate(nomeAvaliador, observacoesAvaliador, desempenho);
 
 		// 4. Atualiza os campos de negócio
-		avaliacaoDetalhe.setTipoAvaliador(tipoAvaliador);
 		avaliacaoDetalhe.setNomeAvaliador(nomeAvaliador);
 		avaliacaoDetalhe.setObservacoesAvaliador(observacoesAvaliador);
 		avaliacaoDetalhe.setDesempenho(desempenho);
@@ -217,46 +246,68 @@ public class AvaliacaoDetalheLocalServiceImpl
 		return super.deleteAvaliacaoDetalhe(avaliacaoDetalhe);
 	}
 
-
 	/**
-	 * Valida os campos obrigatórios para criação de detalhe de avaliação.
+	 * Valida os campos MÍNIMOS para criação de detalhe de avaliação.
+	 * PERMITE detalhes vazios (nomeAvaliador=null, observações=null, desempenho=0).
+	 * Usado no método addAvaliacaoDetalhe().
 	 *
-	 * @param avaliacao            Avaliação pai (não pode ser nula)
-	 * @param tipoAvaliador        Tipo do avaliador (deve ser válido no enum)
-	 * @param nomeAvaliador        Nome do avaliador (não pode estar vazio)
-	 * @param observacoesAvaliador Observações (não pode estar vazio)
-	 * @param desempenho           Nota de desempenho (deve ser válida no enum)
-	 * @throws PortalException     quando algum campo é inválido
+	 * @param avaliacao Avaliação pai (não pode ser nula)
+	 * @param tipoAvaliador Tipo do avaliador (deve ser válido no enum: 1, 2 ou 3)
+	 * @param desempenho Nota de desempenho (pode ser 0 para detalhes vazios, 1-5 quando preenchido)
+	 * @throws PortalException quando avaliação pai ou tipo de avaliador for inválido
 	 */
 	private void validateAvaliacaoDetalheFields(
 			Avaliacao avaliacao,
-			int tipoAvaliador,          // ← int
-			String nomeAvaliador,
-			String observacoesAvaliador,
+			int tipoAvaliador,
 			int desempenho) throws PortalException {
 
-
+		// Valida avaliação pai (OBRIGATÓRIA)
 		if (avaliacao == null || avaliacao.getAvaliacaoId() <= 0) {
-			throw new PortalException("Avaliação pai é obrigatória.");
+			throw new PortalException("Avaliação é obrigatória.");
 		}
 
-
+		// Valida tipo de avaliador (OBRIGATÓRIO)
 		try {
-			TipoAvaliadorEnum.fromId(tipoAvaliador);  // ← Use fromId para int
+			TipoAvaliadorEnum.fromId(tipoAvaliador);
 		} catch (IllegalArgumentException e) {
 			throw new PortalException("Tipo de avaliador inválido: " + tipoAvaliador);
 		}
 
+		// Valida desempenho APENAS se foi preenchido (> 0)
+		if (desempenho > 0) {
+			try {
+				DesempenhoEnum.fromId(desempenho);
+			} catch (IllegalArgumentException e) {
+				throw new PortalException("Valor de desempenho inválido: " + desempenho);
+			}
+		}
+	}
+
+	/**
+	 * Validações RIGOROSAS para UPDATE (exige campos preenchidos).
+	 * Usado no método updateAvaliacaoDetalhe().
+	 *
+	 * @param nomeAvaliador Nome do avaliador (obrigatório)
+	 * @param observacoesAvaliador Observações (obrigatório)
+	 * @param desempenho Desempenho (obrigatório, 1-5)
+	 * @throws PortalException se algum campo estiver vazio/inválido
+	 */
+	private void validateAvaliacaoDetalheFieldsUpdate(
+			String nomeAvaliador,
+			String observacoesAvaliador,
+			int desempenho) throws PortalException {
 
 		if (Validator.isNull(nomeAvaliador)) {
 			throw new PortalException("Nome do avaliador é obrigatório.");
 		}
 
-
 		if (Validator.isNull(observacoesAvaliador)) {
 			throw new PortalException("Observações do avaliador são obrigatórias.");
 		}
 
+		if (desempenho <= 0) {
+			throw new PortalException("Desempenho é obrigatório e deve ser maior que zero.");
+		}
 
 		try {
 			DesempenhoEnum.fromId(desempenho);
@@ -264,6 +315,20 @@ public class AvaliacaoDetalheLocalServiceImpl
 			throw new PortalException("Valor de desempenho inválido: " + desempenho);
 		}
 	}
+
+	/**
+	 * Verifica se um detalhe de avaliação está preenchido ou vazio.
+	 * Um detalhe é considerado preenchido se possui observações OU desempenho > 0.
+	 *
+	 * @param detalhe detalhe de avaliação a ser verificado
+	 * @return true se o detalhe está preenchido, false se está vazio
+	 */
+	private boolean isDetalhePreenchido(AvaliacaoDetalhe detalhe) {
+		return (Validator.isNotNull(detalhe.getObservacoesAvaliador()) &&
+				!detalhe.getObservacoesAvaliador().trim().isEmpty()) ||
+				detalhe.getDesempenho() > 0;
+	}
+
 
 	private static final Log _log = LogFactoryUtil.getLog(AvaliacaoDetalheLocalServiceImpl.class);
 

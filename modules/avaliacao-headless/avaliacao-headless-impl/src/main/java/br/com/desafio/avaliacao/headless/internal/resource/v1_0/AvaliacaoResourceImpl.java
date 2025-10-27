@@ -5,11 +5,14 @@ import br.com.desafio.avaliacao.headless.dto.v1_0.AvaliacaoCompleta;
 import br.com.desafio.avaliacao.headless.dto.v1_0.AvaliacaoDetalhe;
 import br.com.desafio.avaliacao.headless.internal.converter.ConverterDto;
 import br.com.desafio.avaliacao.headless.resource.v1_0.AvaliacaoResource;
+import br.com.example.model.avaliacao.permission.AvaliacaoPermissionChecker;
 import br.com.example.model.avaliacao.service.AvaliacaoDetalheLocalService;
 import br.com.example.model.avaliacao.service.AvaliacaoLocalService;
 import br.com.example.model.avaliacao.service.search.AvaliacaoSearchHelper;
 import br.com.example.model.avaliacao.service.search.AvaliacaoSearchService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.vulcan.pagination.Page;
@@ -231,29 +234,60 @@ public class AvaliacaoResourceImpl extends BaseAvaliacaoResourceImpl {
 						serviceContext
 				);
 
-		// 2. Obtem o avaliacaoId gerado
-		long avaliacaoId = avaliacaoEntity.getAvaliacaoId();
-
-		// 3. Cria TODOS os DETALHES (TechLead, Gerente, RH)
+		// 2. Cria 3 detalhes VAZIOS obrigatórios
 		List<br.com.example.model.avaliacao.model.AvaliacaoDetalhe> detalhesEntities =
 				new ArrayList<>();
+		// Detalhe vazio para Tech Lead (tipo 1)
+		br.com.example.model.avaliacao.model.AvaliacaoDetalhe detalheTechLead =
+				_avaliacaoDetalheLocalService.addAvaliacaoDetalhe(
+						avaliacaoEntity,
+						1,      // TechLead
+						null,   // Nome vazio
+						null,   // Observações vazias
+						0,      // Desempenho vazio
+						serviceContext
+				);
+		detalhesEntities.add(detalheTechLead);
 
-		AvaliacaoDetalhe[] detalhesDTO = avaliacaoCompleta.getAvaliacaoDetalhes();
+		// Detalhe vazio para Gerente (tipo 2)
+		br.com.example.model.avaliacao.model.AvaliacaoDetalhe detalheGerente =
+				_avaliacaoDetalheLocalService.addAvaliacaoDetalhe(
+						avaliacaoEntity,
+						2,      // Gerente
+						null,   // Nome vazio
+						null,   // Observações vazias
+						0,      // Desempenho vazio
+						serviceContext
+				);
+		detalhesEntities.add(detalheGerente);
 
-		if (detalhesDTO != null && detalhesDTO.length > 0) {
-			for (AvaliacaoDetalhe detalheDTO : detalhesDTO) {
-				br.com.example.model.avaliacao.model.AvaliacaoDetalhe detalheEntity =
-						_avaliacaoDetalheLocalService.addAvaliacaoDetalhe(
-								avaliacaoEntity,
-								detalheDTO.getTipoAvaliador(),
-								detalheDTO.getNomeAvaliador(),
-								detalheDTO.getObservacoesAvaliador(),
-								detalheDTO.getDesempenho(),
-								serviceContext
-						);
+		// Detalhe vazio para RH (tipo 3)
+		br.com.example.model.avaliacao.model.AvaliacaoDetalhe detalheRH =
+				_avaliacaoDetalheLocalService.addAvaliacaoDetalhe(
+						avaliacaoEntity,
+						3,      // RH
+						null,   // Nome vazio
+						null,   // Observações vazias
+						0,      // Desempenho vazio
+						serviceContext
+				);
+		detalhesEntities.add(detalheRH);
 
-				detalhesEntities.add(detalheEntity);
-			}
+		// 3. Envia email INICIAL para TODOS os avaliadores
+		try {
+			br.com.example.model.avaliacao.notification.EmailNotificationUtil
+					.enviarEmailInicialParaAvaliadores(
+							avaliacaoEntity,
+							serviceContext.getCompanyId(),
+							_avaliacaoPermissionChecker
+					);
+
+			_log.info("Email inicial enviado para avaliadores (Avaliação ID: " +
+					avaliacaoEntity.getAvaliacaoId() + ")");
+
+		} catch (Exception e) {
+			_log.warn("Erro ao enviar email inicial para avaliadores", e);
+			// Não falha a operação principal
 		}
 
 		// 4. Converte tudo de volta para DTO composto
@@ -358,6 +392,8 @@ public class AvaliacaoResourceImpl extends BaseAvaliacaoResourceImpl {
 		return serviceContext;  // Retorna contexto configurado
 	}
 
+	private static final Log _log = LogFactoryUtil.getLog(AvaliacaoResourceImpl.class);
+
 	@Reference
 	private AvaliacaoLocalService _avaliacaoLocalService;
 
@@ -369,5 +405,8 @@ public class AvaliacaoResourceImpl extends BaseAvaliacaoResourceImpl {
 
 	@Reference
 	private AvaliacaoSearchHelper _searchHelper;
+
+	@Reference
+	private AvaliacaoPermissionChecker _avaliacaoPermissionChecker;
 
 }

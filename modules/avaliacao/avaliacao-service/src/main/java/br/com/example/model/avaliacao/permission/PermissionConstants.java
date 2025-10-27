@@ -1,13 +1,11 @@
 package br.com.example.model.avaliacao.permission;
 
 /**
- * Constantes relacionadas a permissões e roles do sistema de avaliação.
+ * Constantes relacionadas a permissões e ROLES DO SISTEMA de avaliação.
  *
  * @author SEA TECNOLOGIA
  */
 public class PermissionConstants {
-
-    // ============ ROLES DO SISTEMA ============
 
     /** Role de Administrador do sistema */
     public static final String ROLE_ADMINISTRATOR = "Administrator";

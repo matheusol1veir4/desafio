@@ -4,11 +4,14 @@ import br.com.example.model.avaliacao.model.AvaliacaoDetalhe;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Checker de permissões customizadas para regras de negócio de avaliações.
@@ -45,6 +48,27 @@ public class AvaliacaoPermissionChecker {
                 && tipoAvaliador == PermissionConstants.TIPO_RH) return true;
 
         return false;
+    }
+
+    /**
+     * Retorna todos os usuários que possuem uma determinada role.
+     *
+     * @param nomeRole Nome da role (ex: "Avaliador_RH")
+     * @param companyId ID da company/instância do Liferay
+     * @return Lista de usuários com a role especificada
+     */
+    public List<User> getUsersComRole(String nomeRole, long companyId) {
+        try {
+            // Primeiro, obtém a Role pelo nome
+            Role role = _roleLocalService.getRole(companyId, nomeRole);
+
+            // Depois, obtém todos os usuários que possuem essa role
+            return _userLocalService.getRoleUsers(role.getRoleId());
+
+        } catch (PortalException e) {
+            _log.error("Erro ao buscar usuários com a role: " + nomeRole, e);
+            return new ArrayList<>();
+        }
     }
 
     /**

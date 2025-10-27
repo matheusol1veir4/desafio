@@ -7,6 +7,7 @@ Liferay-Service: true
 Export-Package: \
 	br.com.example.model.avaliacao.service.search,\
 	br.com.example.model.avaliacao.indexer,\
-    br.com.example.model.avaliacao.permission
+    br.com.example.model.avaliacao.permission,\
+    br.com.example.model.avaliacao.notification
 
 -dsannotations-options: inherit
