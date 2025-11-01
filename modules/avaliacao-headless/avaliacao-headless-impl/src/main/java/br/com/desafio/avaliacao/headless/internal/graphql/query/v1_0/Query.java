@@ -102,6 +102,43 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {avaliacoesPendentesParaMim{items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(
+		description = "Retorna avaliações pendentes para o usuário logado baseado no seu papel (Tech Lead, Gerente ou RH). Busca avaliações onde o usuário tem um detalhe pendente (desempenho = 0)."
+	)
+	public AvaliacaoPage avaliacoesPendentesParaMim() throws Exception {
+		return _applyComponentServiceObjects(
+			_avaliacaoResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			avaliacaoResource -> new AvaliacaoPage(
+				avaliacaoResource.getAvaliacoesPendentesParaMim()));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {funcionarios(nome: ___, page: ___, pageSize: ___){}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField(
+		description = "Busca funcionários ativos do Liferay - Digite o nome para filtrar"
+	)
+	public Object funcionarios(
+			@GraphQLName("nome") String nome,
+			@GraphQLName("pageSize") int pageSize,
+			@GraphQLName("page") int page)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_avaliacaoResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			avaliacaoResource -> avaliacaoResource.getFuncionarios(
+				nome, Pagination.of(page, pageSize)));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
 	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {avaliacaoById(avaliacaoId: ___){avaliacaoId, funcionarioId, dataAvaliacao, periodoDesafio, observacoesGerais, areaAtuacao}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField(description = "Busca uma avaliação específica por ID")

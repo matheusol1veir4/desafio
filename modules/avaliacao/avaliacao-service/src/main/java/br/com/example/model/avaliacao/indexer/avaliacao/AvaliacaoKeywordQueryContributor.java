@@ -9,6 +9,12 @@ import com.liferay.portal.search.spi.model.query.contributor.helper.KeywordQuery
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+/**
+ * Define como palavras-chave digitadas são traduzidas em queries sobre campos indexados de Avaliacao para buscas no Liferay.
+ *
+ * @author Matheus Oliveira
+ */
+
 @Component(
         immediate = true,
         property = "indexer.class.name=br.com.example.model.avaliacao.model.Avaliacao",

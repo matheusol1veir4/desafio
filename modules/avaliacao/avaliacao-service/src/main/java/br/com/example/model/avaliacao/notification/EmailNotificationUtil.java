@@ -86,6 +86,9 @@ public class EmailNotificationUtil {
                 .replace("{{anoAtual}}", yearFormat.format(new java.util.Date()));
     }
 
+
+
+    // Para implementação futura de notificações quando avaliadores preenchem suas partes
     /**
      * Envia notificação para RH quando um avaliador preenche sua parte.
      *

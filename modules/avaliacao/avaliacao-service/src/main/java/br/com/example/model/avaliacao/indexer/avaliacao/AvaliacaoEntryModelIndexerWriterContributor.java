@@ -9,6 +9,13 @@ import com.liferay.portal.search.spi.model.index.contributor.helper.ModelIndexer
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+/**
+ * Gerencia a escrita em lote (batch) das Avaliacoes no índice, otimizando a performance durante reindexações.
+ *
+ * @author Matheus Oliveira
+ */
+
+
 @Component(
         property = "indexer.class.name=br.com.example.model.avaliacao.model.Avaliacao",
         service = ModelIndexerWriterContributor.class

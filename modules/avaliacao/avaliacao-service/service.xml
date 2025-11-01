@@ -76,6 +76,11 @@
 			<finder-column name="tipoAvaliador" />
 		</finder>
 
+		<finder name="TipoAvaliadorAndDesempenho" return-type="Collection">
+			<finder-column name="tipoAvaliador" />
+			<finder-column name="desempenho" />
+		</finder>
+
 
 	</entity>
 </service-builder>

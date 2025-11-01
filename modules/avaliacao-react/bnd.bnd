@@ -1,0 +1,8 @@
+Bundle-Name: avaliacao-react
+Bundle-SymbolicName: br.com.desafio.avaliacao
+Bundle-Version: 1.0.0
+Export-Package: br.com.desafio.avaliacao.constants
+Provide-Capability:\
+	liferay.language.resources;\
+		resource.bundle.base.name="content.Language"
+Web-ContextPath: /avaliacao-react

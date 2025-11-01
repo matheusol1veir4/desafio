@@ -17,6 +17,11 @@ import org.osgi.service.component.annotations.Reference;
 
 import java.util.List;
 
+/**
+ * Preenche o documento de indexação com dados das entidades Avaliacao e relacionamentos, tornando-os buscáveis pelo search engine.
+ *
+ * @author Matheus Oliveira
+ */
 @Component(
         immediate = true,
         property = "indexer.class.name=br.com.example.model.avaliacao.model.Avaliacao",

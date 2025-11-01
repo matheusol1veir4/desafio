@@ -119,9 +119,9 @@ paths:
   # ==========================================
   # GRUPO 1: CRUD de Avaliação
   # ==========================================
-
   # GET /o/avaliacao-rest/v1.0/avaliacoes
   # POST /o/avaliacao-rest/v1.0/avaliacoes
+
   "/avaliacoes":
     get:
       operationId: getAllAvaliacoes
@@ -246,6 +246,97 @@ paths:
         400:
           description: "Parâmetros inválidos (formato de data, área ou período incorretos)"
 
+  # ==========================================
+  #ENDPOINT: GET /o/avaliacao-rest/v1.0/avaliacoes/pendentes-para-mim
+  # ==========================================
+  "/avaliacoes/pendentes-para-mim":
+    get:
+      operationId: getAvaliacoesPendentesParaMim
+      tags: ["Avaliacao"]
+      description: "Retorna avaliações pendentes para o usuário logado baseado no seu papel (Tech Lead, Gerente ou RH). Busca avaliações onde o usuário tem um detalhe pendente (desempenho = 0)."
+      responses:
+        200:
+          description: "Lista de avaliações pendentes do usuário"
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/AvaliacaoCompleta"
+                type: array
+            application/xml:
+              schema:
+                items:
+                  $ref: "#/components/schemas/AvaliacaoCompleta"
+                type: array
+        401:
+          description: "Usuário não autenticado"
+        403:
+          description: "Usuário não possui papel de avaliador (Tech Lead, Gerente ou RH)"
+
+  "/funcionarios":
+    get:
+      operationId: getFuncionarios
+      tags: [ "Avaliacao" ]
+      description: "Busca funcionários ativos do Liferay - Digite o nome para filtrar"
+      parameters:
+        - in: query
+          name: nome
+          description: "Nome do funcionário para busca parcial (case-insensitive)"
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      properties:
+                        funcionarioId:
+                          type: integer
+                          format: int64
+                        nome:
+                          type: string
+                        email:
+                          type: string
+                        screenName:
+                          type: string
+                  totalCount:
+                    type: integer
+                    format: int64
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      properties:
+                        funcionarioId:
+                          type: integer
+                          format: int64
+                        nome:
+                          type: string
+                        email:
+                          type: string
+                        screenName:
+                          type: string
+                  totalCount:
+                    type: integer
+                    format: int64
+
   # GET /o/avaliacao-rest/v1.0/avaliacoes/{avaliacaoId}
   # PUT /o/avaliacao-rest/v1.0/avaliacoes/{avaliacaoId}
   # DELETE /o/avaliacao-rest/v1.0/avaliacoes/{avaliacaoId}
@@ -328,7 +419,6 @@ paths:
   # ==========================================
   # GRUPO 2: Consultas Específicas de Avaliação
   # ==========================================
-
   # GET /o/avaliacao-rest/v1.0/avaliacoes/funcionario/{funcionarioId}
   "/avaliacoes/funcionario/{funcionarioId}":
     get:
@@ -395,7 +485,6 @@ paths:
   # ==========================================
   # GRUPO 3: CRUD de AvaliacaoDetalhe
   # ==========================================
-
   # GET /o/avaliacao-rest/v1.0/avaliacoes/{avaliacaoId}/detalhes
   # POST /o/avaliacao-rest/v1.0/avaliacoes/{avaliacaoId}/detalhes
   "/avaliacoes/{avaliacaoId}/detalhes":
@@ -539,7 +628,6 @@ paths:
   # ==========================================
   # GRUPO 4: Endpoints de Avaliação Completa
   # ==========================================
-
   # POST /o/avaliacao-rest/v1.0/avaliacoes/completa
   "/avaliacoes/completa":
     post:

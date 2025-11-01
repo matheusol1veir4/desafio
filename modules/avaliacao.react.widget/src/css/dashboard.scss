@@ -1,0 +1,141 @@
+@import './base.scss';
+
+.dashboard-container {
+  padding: $spacing-lg 0;
+}
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dashboard-content {
+  background-color: $bg;
+  padding: $spacing-lg;
+  border-radius: $radius;
+  box-shadow: $shadow-sm;
+  
+  h2 {
+    margin-top: 0;
+    margin-bottom: $spacing-lg;
+    font-size: 24px;
+  }
+}
+
+.dashboard-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $spacing-md;
+  border-bottom: 1px solid $border;
+  transition: background-color 0.3s ease;
+  
+  &:hover {
+    background-color: $bg-alt;
+  }
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.progress-bar-section {
+  margin-top: $spacing-lg;
+  
+  label {
+    display: block;
+    margin-bottom: $spacing-sm;
+    font-weight: 600;
+    font-size: 14px;
+  }
+}
+
+.progress-bar {
+  width: 100%;
+  height: 20px;
+  background-color: $bg-alt;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: $spacing-sm;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4caf50, #007bff);
+  transition: width 0.3s ease;
+}
+
+.tabela-section {
+  margin-top: $spacing-lg;
+  
+  h2 {
+    margin-top: 0;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+.relatorios-table {
+  width: 100%;
+  border-collapse: collapse;
+  
+  thead {
+    background-color: $bg-alt;
+  }
+  
+  th, td {
+    padding: $spacing-md;
+    text-align: left;
+    border-bottom: 1px solid $border;
+  }
+  
+  th {
+    font-weight: 600;
+    color: $text;
+    font-size: 12px;
+  }
+  
+  tbody tr {
+    transition: background-color 0.3s ease;
+    
+    &:hover {
+      background-color: $bg-alt;
+    }
+  }
+  
+  td {
+    font-size: 14px;
+    color: $text;
+  }
+}
+
+.stats-section {
+  margin-bottom: $spacing-xl;
+}
+
+.filtros-section {
+  margin-bottom: $spacing-xl;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-md;
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}

@@ -2,7 +2,7 @@
     "private": true,
     "workspaces": {
         "packages": [
-            "modules/avaliacao-web",
+            "modules/avaliacao-react",
             "modules/avaliacao.react.widget"
         ]
     }

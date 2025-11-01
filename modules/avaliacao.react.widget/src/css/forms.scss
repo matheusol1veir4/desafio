@@ -1,0 +1,108 @@
+@import './base.scss';
+
+.form-group {
+  margin-bottom: $spacing-lg;
+  
+  label {
+    display: block;
+    margin-bottom: $spacing-sm;
+    font-weight: 600;
+    font-size: 14px;
+    color: $text;
+  }
+  
+  small {
+    display: block;
+    margin-top: $spacing-sm;
+    color: $text-light;
+    font-size: 12px;
+  }
+}
+
+.form-control {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid $border;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.1);
+  }
+  
+  &:disabled {
+    background-color: $bg-alt;
+    color: $text-light;
+    cursor: not-allowed;
+  }
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 120px;
+  font-family: inherit;
+}
+
+select.form-control {
+  cursor: pointer;
+}
+
+.form-avaliacao,
+.form-detalhe,
+.form-preencher {
+  background-color: $bg;
+  padding: $spacing-lg;
+  border-radius: $radius;
+  box-shadow: $shadow-sm;
+}
+
+.form-text {
+  display: block;
+  color: $text-light;
+  font-size: 12px;
+  margin-top: $spacing-sm;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: $spacing-sm $spacing-md;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  
+  &.status-pendente {
+    background-color: #ffe6cc;
+    color: #ff9800;
+  }
+  
+  &.status-em-andamento,
+  &.status-andamento {
+    background-color: #e3f2fd;
+    color: #2196f3;
+  }
+  
+  &.status-completa {
+    background-color: #e8f5e9;
+    color: #4caf50;
+  }
+  
+  &.badge-success {
+    background-color: #e8f5e9;
+    color: #4caf50;
+  }
+  
+  &.badge-warning {
+    background-color: #ffe6cc;
+    color: #ff9800;
+  }
+  
+  &.badge-danger {
+    background-color: #ffebee;
+    color: #dc3545;
+  }
+}

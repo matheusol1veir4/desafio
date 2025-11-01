@@ -10,6 +10,12 @@ import com.liferay.portal.search.spi.model.result.contributor.ModelSummaryContri
 import org.osgi.service.component.annotations.Component;
 import java.util.Locale;
 
+/**
+ * Gera títulos e resumos exibidos nos resultados de busca das Avaliacoes para facilitar a identificação pelo usuário.
+ *
+ * @author Matheus Oliveira
+ */
+
 @Component(
         property = "indexer.class.name=br.com.example.model.avaliacao.model.Avaliacao",
         service = ModelSummaryContributor.class

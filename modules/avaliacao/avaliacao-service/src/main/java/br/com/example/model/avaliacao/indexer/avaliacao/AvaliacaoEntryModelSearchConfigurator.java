@@ -9,6 +9,13 @@ import com.liferay.portal.search.spi.model.result.contributor.ModelSummaryContri
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+/**
+ * Configura a indexação da entidade Avaliacao no search do Liferay, definindo campos indexados e conectando components relacionados à busca.
+ *
+ * @author Matheus Oliveira
+ */
+
+
 @Component(service = ModelSearchConfigurator.class)
 public class AvaliacaoEntryModelSearchConfigurator implements ModelSearchConfigurator<Avaliacao> {
 

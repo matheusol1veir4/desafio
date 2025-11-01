@@ -518,6 +518,163 @@ public interface AvaliacaoDetalhePersistence
 		long avaliacaoId, int tipoAvaliador);
 
 	/**
+	 * Returns all the avaliacao detalhes where tipoAvaliador = &#63; and desempenho = &#63;.
+	 *
+	 * @param tipoAvaliador the tipo avaliador
+	 * @param desempenho the desempenho
+	 * @return the matching avaliacao detalhes
+	 */
+	public java.util.List<AvaliacaoDetalhe> findByTipoAvaliadorAndDesempenho(
+		int tipoAvaliador, int desempenho);
+
+	/**
+	 * Returns a range of all the avaliacao detalhes where tipoAvaliador = &#63; and desempenho = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AvaliacaoDetalheModelImpl</code>.
+	 * </p>
+	 *
+	 * @param tipoAvaliador the tipo avaliador
+	 * @param desempenho the desempenho
+	 * @param start the lower bound of the range of avaliacao detalhes
+	 * @param end the upper bound of the range of avaliacao detalhes (not inclusive)
+	 * @return the range of matching avaliacao detalhes
+	 */
+	public java.util.List<AvaliacaoDetalhe> findByTipoAvaliadorAndDesempenho(
+		int tipoAvaliador, int desempenho, int start, int end);
+
+	/**
+	 * Returns an ordered range of all the avaliacao detalhes where tipoAvaliador = &#63; and desempenho = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AvaliacaoDetalheModelImpl</code>.
+	 * </p>
+	 *
+	 * @param tipoAvaliador the tipo avaliador
+	 * @param desempenho the desempenho
+	 * @param start the lower bound of the range of avaliacao detalhes
+	 * @param end the upper bound of the range of avaliacao detalhes (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @return the ordered range of matching avaliacao detalhes
+	 */
+	public java.util.List<AvaliacaoDetalhe> findByTipoAvaliadorAndDesempenho(
+		int tipoAvaliador, int desempenho, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<AvaliacaoDetalhe>
+			orderByComparator);
+
+	/**
+	 * Returns an ordered range of all the avaliacao detalhes where tipoAvaliador = &#63; and desempenho = &#63;.
+	 *
+	 * <p>
+	 * Useful when paginating results. Returns a maximum of <code>end - start</code> instances. <code>start</code> and <code>end</code> are not primary keys, they are indexes in the result set. Thus, <code>0</code> refers to the first result in the set. Setting both <code>start</code> and <code>end</code> to <code>QueryUtil#ALL_POS</code> will return the full result set. If <code>orderByComparator</code> is specified, then the query will include the given ORDER BY logic. If <code>orderByComparator</code> is absent, then the query will include the default ORDER BY logic from <code>AvaliacaoDetalheModelImpl</code>.
+	 * </p>
+	 *
+	 * @param tipoAvaliador the tipo avaliador
+	 * @param desempenho the desempenho
+	 * @param start the lower bound of the range of avaliacao detalhes
+	 * @param end the upper bound of the range of avaliacao detalhes (not inclusive)
+	 * @param orderByComparator the comparator to order the results by (optionally <code>null</code>)
+	 * @param useFinderCache whether to use the finder cache
+	 * @return the ordered range of matching avaliacao detalhes
+	 */
+	public java.util.List<AvaliacaoDetalhe> findByTipoAvaliadorAndDesempenho(
+		int tipoAvaliador, int desempenho, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<AvaliacaoDetalhe>
+			orderByComparator,
+		boolean useFinderCache);
+
+	/**
+	 * Returns the first avaliacao detalhe in the ordered set where tipoAvaliador = &#63; and desempenho = &#63;.
+	 *
+	 * @param tipoAvaliador the tipo avaliador
+	 * @param desempenho the desempenho
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching avaliacao detalhe
+	 * @throws NoSuchAvaliacaoDetalheException if a matching avaliacao detalhe could not be found
+	 */
+	public AvaliacaoDetalhe findByTipoAvaliadorAndDesempenho_First(
+			int tipoAvaliador, int desempenho,
+			com.liferay.portal.kernel.util.OrderByComparator<AvaliacaoDetalhe>
+				orderByComparator)
+		throws NoSuchAvaliacaoDetalheException;
+
+	/**
+	 * Returns the first avaliacao detalhe in the ordered set where tipoAvaliador = &#63; and desempenho = &#63;.
+	 *
+	 * @param tipoAvaliador the tipo avaliador
+	 * @param desempenho the desempenho
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the first matching avaliacao detalhe, or <code>null</code> if a matching avaliacao detalhe could not be found
+	 */
+	public AvaliacaoDetalhe fetchByTipoAvaliadorAndDesempenho_First(
+		int tipoAvaliador, int desempenho,
+		com.liferay.portal.kernel.util.OrderByComparator<AvaliacaoDetalhe>
+			orderByComparator);
+
+	/**
+	 * Returns the last avaliacao detalhe in the ordered set where tipoAvaliador = &#63; and desempenho = &#63;.
+	 *
+	 * @param tipoAvaliador the tipo avaliador
+	 * @param desempenho the desempenho
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching avaliacao detalhe
+	 * @throws NoSuchAvaliacaoDetalheException if a matching avaliacao detalhe could not be found
+	 */
+	public AvaliacaoDetalhe findByTipoAvaliadorAndDesempenho_Last(
+			int tipoAvaliador, int desempenho,
+			com.liferay.portal.kernel.util.OrderByComparator<AvaliacaoDetalhe>
+				orderByComparator)
+		throws NoSuchAvaliacaoDetalheException;
+
+	/**
+	 * Returns the last avaliacao detalhe in the ordered set where tipoAvaliador = &#63; and desempenho = &#63;.
+	 *
+	 * @param tipoAvaliador the tipo avaliador
+	 * @param desempenho the desempenho
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the last matching avaliacao detalhe, or <code>null</code> if a matching avaliacao detalhe could not be found
+	 */
+	public AvaliacaoDetalhe fetchByTipoAvaliadorAndDesempenho_Last(
+		int tipoAvaliador, int desempenho,
+		com.liferay.portal.kernel.util.OrderByComparator<AvaliacaoDetalhe>
+			orderByComparator);
+
+	/**
+	 * Returns the avaliacao detalhes before and after the current avaliacao detalhe in the ordered set where tipoAvaliador = &#63; and desempenho = &#63;.
+	 *
+	 * @param avaliacaoDetalheId the primary key of the current avaliacao detalhe
+	 * @param tipoAvaliador the tipo avaliador
+	 * @param desempenho the desempenho
+	 * @param orderByComparator the comparator to order the set by (optionally <code>null</code>)
+	 * @return the previous, current, and next avaliacao detalhe
+	 * @throws NoSuchAvaliacaoDetalheException if a avaliacao detalhe with the primary key could not be found
+	 */
+	public AvaliacaoDetalhe[] findByTipoAvaliadorAndDesempenho_PrevAndNext(
+			long avaliacaoDetalheId, int tipoAvaliador, int desempenho,
+			com.liferay.portal.kernel.util.OrderByComparator<AvaliacaoDetalhe>
+				orderByComparator)
+		throws NoSuchAvaliacaoDetalheException;
+
+	/**
+	 * Removes all the avaliacao detalhes where tipoAvaliador = &#63; and desempenho = &#63; from the database.
+	 *
+	 * @param tipoAvaliador the tipo avaliador
+	 * @param desempenho the desempenho
+	 */
+	public void removeByTipoAvaliadorAndDesempenho(
+		int tipoAvaliador, int desempenho);
+
+	/**
+	 * Returns the number of avaliacao detalhes where tipoAvaliador = &#63; and desempenho = &#63;.
+	 *
+	 * @param tipoAvaliador the tipo avaliador
+	 * @param desempenho the desempenho
+	 * @return the number of matching avaliacao detalhes
+	 */
+	public int countByTipoAvaliadorAndDesempenho(
+		int tipoAvaliador, int desempenho);
+
+	/**
 	 * Caches the avaliacao detalhe in the entity cache if it is enabled.
 	 *
 	 * @param avaliacaoDetalhe the avaliacao detalhe

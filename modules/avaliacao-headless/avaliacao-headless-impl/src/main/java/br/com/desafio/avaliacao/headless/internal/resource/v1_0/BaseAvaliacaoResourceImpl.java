@@ -194,6 +194,68 @@ public abstract class BaseAvaliacaoResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
+	 * curl -X 'GET' 'http://localhost:8080/o/avaliacao-headless/v1.0/avaliacoes/pendentes-para-mim'  -u 'test@liferay.com:test'
+	 */
+	@io.swagger.v3.oas.annotations.Operation(
+		description = "Retorna avaliações pendentes para o usuário logado baseado no seu papel (Tech Lead, Gerente ou RH). Busca avaliações onde o usuário tem um detalhe pendente (desempenho = 0)."
+	)
+	@io.swagger.v3.oas.annotations.tags.Tags(
+		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Avaliacao")}
+	)
+	@javax.ws.rs.GET
+	@javax.ws.rs.Path("/avaliacoes/pendentes-para-mim")
+	@javax.ws.rs.Produces({"application/json", "application/xml"})
+	@Override
+	public Page<AvaliacaoCompleta> getAvaliacoesPendentesParaMim()
+		throws Exception {
+
+		return Page.of(Collections.emptyList());
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -X 'GET' 'http://localhost:8080/o/avaliacao-headless/v1.0/funcionarios'  -u 'test@liferay.com:test'
+	 */
+	@io.swagger.v3.oas.annotations.Operation(
+		description = "Busca funcionários ativos do Liferay - Digite o nome para filtrar"
+	)
+	@io.swagger.v3.oas.annotations.Parameters(
+		value = {
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "nome"
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "page"
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "pageSize"
+			)
+		}
+	)
+	@io.swagger.v3.oas.annotations.tags.Tags(
+		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Avaliacao")}
+	)
+	@javax.ws.rs.GET
+	@javax.ws.rs.Path("/funcionarios")
+	@javax.ws.rs.Produces({"application/json", "application/xml"})
+	@Override
+	public Object getFuncionarios(
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@javax.ws.rs.QueryParam("nome")
+			String nome,
+			@javax.ws.rs.core.Context Pagination pagination)
+		throws Exception {
+
+		return null;
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
 	 * curl -X 'DELETE' 'http://localhost:8080/o/avaliacao-headless/v1.0/avaliacoes/{avaliacaoId}'  -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Operation(

@@ -1,0 +1,128 @@
+@import './base.scss';
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: $bg-alt;
+}
+
+.app-main {
+  flex: 1;
+  padding: $spacing-lg 0;
+}
+
+.app-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+  width: 100%;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-md;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-md;
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dashboard-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-md;
+}
+
+.avaliacoes-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-md;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+  gap: $spacing-md;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.section {
+  background-color: $bg;
+  border-radius: $radius;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-lg;
+  box-shadow: $shadow-sm;
+  
+  h2 {
+    margin-top: 0;
+  }
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  
+  label {
+    font-weight: 600;
+    font-size: 14px;
+    color: $text-light;
+  }
+  
+  span {
+    font-size: 16px;
+    color: $text;
+  }
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: $spacing-sm 0;
+  border-bottom: 1px solid $border;
+  
+  strong {
+    color: $text;
+    min-width: 150px;
+  }
+  
+  span {
+    color: $text-light;
+  }
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}

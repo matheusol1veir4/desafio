@@ -63,6 +63,20 @@ public class AvaliacaoDetalheLocalServiceImpl
 	}
 
 	/**
+	 * Busca detalhes por tipo de avaliador E desempenho.
+	 *
+	 * Usado para encontrar detalhes pendentes (desempenho = 0) de um tipo de avaliador específico.
+	 *
+	 * @param tipoAvaliador tipo do avaliador (1=TechLead, 2=Gerente, 3=RH)
+	 * @param desempenho nota de desempenho (geralmente 0 para pendentes, ou 1-5 para preenchidos)
+	 * @return lista de detalhes que atendem ambos os critérios
+	 */
+	@Override
+	public List<AvaliacaoDetalhe> findByTipoAvaliadorAndDesempenho(int tipoAvaliador, int desempenho) {
+		return avaliacaoDetalhePersistence.findByTipoAvaliadorAndDesempenho(tipoAvaliador, desempenho);
+	}
+
+	/**
 	 * Busca detalhes por nota de desempenho.
 	 *
 	 * @param desempenho nota de desempenho (1-5)

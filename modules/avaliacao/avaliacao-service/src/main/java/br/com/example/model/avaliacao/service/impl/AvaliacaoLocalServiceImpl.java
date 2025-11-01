@@ -187,7 +187,7 @@ public class AvaliacaoLocalServiceImpl extends AvaliacaoLocalServiceBaseImpl {
 		return avaliacao;
 	}
 
-	//TO DO: depois que implementar a AvaliacaoDetalhe precisamos implementar a deleção em cascata!!!
+
 	/**
 	 * Remove uma avaliação e todos os seus detalhes relacionados (cascade delete).
 	 *

@@ -134,6 +134,15 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							AvaliacaoResourceImpl.class, "searchAvaliacoes"));
 					put(
+						"query#avaliacoesPendentesParaMim",
+						new ObjectValuePair<>(
+							AvaliacaoResourceImpl.class,
+							"getAvaliacoesPendentesParaMim"));
+					put(
+						"query#funcionarios",
+						new ObjectValuePair<>(
+							AvaliacaoResourceImpl.class, "getFuncionarios"));
+					put(
 						"query#avaliacaoById",
 						new ObjectValuePair<>(
 							AvaliacaoResourceImpl.class, "getAvaliacaoById"));

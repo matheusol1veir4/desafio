@@ -208,6 +208,14 @@ public class AvaliacaoDetalhePersistenceTest {
 	}
 
 	@Test
+	public void testCountByTipoAvaliadorAndDesempenho() throws Exception {
+		_persistence.countByTipoAvaliadorAndDesempenho(
+			RandomTestUtil.nextInt(), RandomTestUtil.nextInt());
+
+		_persistence.countByTipoAvaliadorAndDesempenho(0, 0);
+	}
+
+	@Test
 	public void testFindByPrimaryKeyExisting() throws Exception {
 		AvaliacaoDetalhe newAvaliacaoDetalhe = addAvaliacaoDetalhe();
 

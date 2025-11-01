@@ -54,6 +54,12 @@ public interface AvaliacaoResource {
 			Integer periodo, Pagination pagination)
 		throws Exception;
 
+	public Page<AvaliacaoCompleta> getAvaliacoesPendentesParaMim()
+		throws Exception;
+
+	public Object getFuncionarios(String nome, Pagination pagination)
+		throws Exception;
+
 	public Response deleteAvaliacao(Long avaliacaoId) throws Exception;
 
 	public Response deleteAvaliacaoBatch(String callbackURL, Object object)

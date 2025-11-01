@@ -239,6 +239,18 @@ public interface AvaliacaoDetalheLocalService
 	 */
 	public List<AvaliacaoDetalhe> findByTipoAvaliador(int tipoAvaliador);
 
+	/**
+	 * Busca detalhes por tipo de avaliador E desempenho.
+	 *
+	 * Usado para encontrar detalhes pendentes (desempenho = 0) de um tipo de avaliador específico.
+	 *
+	 * @param tipoAvaliador tipo do avaliador (1=TechLead, 2=Gerente, 3=RH)
+	 * @param desempenho nota de desempenho (geralmente 0 para pendentes, ou 1-5 para preenchidos)
+	 * @return lista de detalhes que atendem ambos os critérios
+	 */
+	public List<AvaliacaoDetalhe> findByTipoAvaliadorAndDesempenho(
+		int tipoAvaliador, int desempenho);
+
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ActionableDynamicQuery getActionableDynamicQuery();
 
@@ -309,15 +321,16 @@ public interface AvaliacaoDetalheLocalService
 
 	/**
 	 * Atualiza um detalhe de avaliação existente.
+	 * O tipo de avaliador NÃO pode ser alterado após a criação (imutável).
 	 *
 	 * @param avaliacaoDetalheId   ID do detalhe a ser atualizado
-	 * @param tipoAvaliador        Tipo do avaliador (1=TechLead, 2=Gerente, 3=RH)
+	 * @param tipoAvaliador        Tipo do avaliador (deve ser igual ao original, não pode mudar)
 	 * @param nomeAvaliador        Nome completo do avaliador
 	 * @param observacoesAvaliador Comentários específicos do avaliador
 	 * @param desempenho           Nota de desempenho (1-5 conforme DesempenhoEnum)
 	 * @param serviceContext       Contexto de serviço com informações de auditoria
 	 * @return O detalhe de avaliação atualizado
-	 * @throws PortalException     se os dados fornecidos forem inválidos
+	 * @throws PortalException     se os dados forem inválidos ou tipo de avaliador for diferente do original
 	 */
 	@Indexable(type = IndexableType.REINDEX)
 	public AvaliacaoDetalhe updateAvaliacaoDetalhe(

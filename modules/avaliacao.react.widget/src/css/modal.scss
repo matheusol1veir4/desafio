@@ -1,0 +1,127 @@
+@import './base.scss';
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-container {
+  background-color: $bg;
+  border-radius: $radius;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+  z-index: 10000;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  border-bottom: 1px solid $border;
+}
+
+.modal-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 18px;
+  flex: 1;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: $text-light;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  
+  &:hover {
+    color: $text;
+    background-color: $bg-alt;
+    border-radius: 4px;
+  }
+}
+
+.modal-body {
+  padding: $spacing-lg;
+}
+
+.modal-message {
+  margin: 0;
+  color: $text;
+  line-height: 1.5;
+}
+
+.modal-footer {
+  padding: $spacing-lg;
+  border-top: 1px solid $border;
+  display: flex;
+  gap: $spacing-md;
+  justify-content: flex-end;
+  
+  .btn {
+    min-width: 120px;
+  }
+}
+
+.modal-success .modal-icon {
+  color: #4caf50;
+}
+
+.modal-error .modal-icon {
+  color: #dc3545;
+}
+
+.modal-warning .modal-icon {
+  color: #ff9800;
+}
+
+.modal-info .modal-icon {
+  color: $primary;
+}
