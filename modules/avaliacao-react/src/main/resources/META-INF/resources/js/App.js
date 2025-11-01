@@ -4,6 +4,7 @@ import ListarAvaliacoes from './pages/ListarAvaliacoes';
 import BuscarAvaliacoes from './pages/BuscarAvaliacoes';
 import AvaliacoesPendentes from './components/AvaliacoesPendentes';
 import PreencherAvaliacao from './pages/PreencherAvaliacao';
+import { DetalheAvaliacoes } from './pages/DetalheAvaliacoes';
 
 const App = () => {
   const [activeTab, setActiveTab] = useState('criar');
@@ -41,6 +42,12 @@ const App = () => {
               Criar Avaliação
             </button>
             <button
+              className={`tab-button ${activeTab === 'detalhes' ? 'active' : ''}`}
+              onClick={() => setActiveTab('detalhes')}
+            >
+              Detalhes da Avaliação
+            </button>
+            <button
               className={`tab-button ${activeTab === 'pendentes' ? 'active' : ''}`}
               onClick={() => setActiveTab('pendentes')}
             >
@@ -62,6 +69,7 @@ const App = () => {
 
           <div className="tab-content">
             {activeTab === 'criar' && <CriarAvaliacao />}
+            {activeTab === 'detalhes' && <DetalheAvaliacoes />}
             {activeTab === 'pendentes' && (
               <AvaliacoesPendentes onPreencherAvaliacao={handlePreencherAvaliacao} />
             )}
